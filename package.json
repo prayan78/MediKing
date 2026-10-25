@@ -1,0 +1,17 @@
+{
+  "name": "mediking",
+  "version": "1.0.0",
+  "description": "MediKing Hospital, Clinic, Lab & Pharmacy Management Web Application",
+  "scripts": {
+    "backend:install": "cd backend && npm install",
+    "frontend:install": "cd frontend && npm install",
+    "install:all": "npm run backend:install && npm run frontend:install",
+    "backend": "cd backend && npm run dev",
+    "frontend": "cd frontend && npm run dev",
+    "seed": "cd backend && npm run seed",
+    "test:backend": "cd backend && npm test"
+  },
+  "keywords": ["hospital", "clinic", "pharmacy", "erp", "mern", "medipro"],
+  "author": "MediKing Team",
+  "license": "ISC"
+}
