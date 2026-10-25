@@ -7,6 +7,10 @@ import CompanySetupModal from './CompanySetupModal';
 import PurchaseEntryModal from './PurchaseEntryModal';
 import PurchaseRegisterModal from './PurchaseRegisterModal';
 import PurchaseBookModal from './PurchaseBookModal';
+import StockBalanceModal from './StockBalanceModal';
+import StockBalanceValuationModal from './StockBalanceValuationModal';
+import CashSalesModal from './CashSalesModal';
+import UserwiseCashSummaryModal from './UserwiseCashSummaryModal';
 import {
   Pill,
   ShoppingCart,
@@ -21,8 +25,10 @@ export default function MediProWorkspace({ onSwitchToModern }) {
   const navigate = useNavigate();
 
   // Menu dropdown states
-  const [activeMenu, setActiveMenu] = useState(null); // 'catalogue', 'purchase', etc.
+  const [activeMenu, setActiveMenu] = useState(null); // 'catalogue', 'purchase', 'sales', 'rep_inv', 'rep_acc', etc.
   const [purchaseSubmenuOpen, setPurchaseSubmenuOpen] = useState(false);
+  const [salesSubmenuOpen, setSalesSubmenuOpen] = useState(false);
+  const [accSubmenuOpen, setAccSubmenuOpen] = useState(false);
 
   // Modal open states
   const [drugSetupOpen, setDrugSetupOpen] = useState(false);
@@ -32,12 +38,23 @@ export default function MediProWorkspace({ onSwitchToModern }) {
   const [purchaseRegisterOpen, setPurchaseRegisterOpen] = useState(false);
   const [purchaseBookOpen, setPurchaseBookOpen] = useState(false);
   const [purchaseBookDateRange, setPurchaseBookDateRange] = useState(null);
+  const [stockBalanceOpen, setStockBalanceOpen] = useState(false);
+  const [stockValuationOpen, setStockValuationOpen] = useState(false);
+  const [goodsSalesSectionOpen, setGoodsSalesSectionOpen] = useState(false);
+  const [cashSalesOpen, setCashSalesOpen] = useState(false);
+  const [cashSalesReturn, setCashSalesReturn] = useState(false);
+  const [forInsurance, setForInsurance] = useState(false);
+  const [forSSF, setForSSF] = useState(false);
+  const [userwiseCashSummaryOpen, setUserwiseCashSummaryOpen] = useState(false);
 
   // Live Clock & Dates
   const [currentTime, setCurrentTime] = useState(new Date());
 
   const catalogueMenuRef = useRef(null);
   const purchaseMenuRef = useRef(null);
+  const salesMenuRef = useRef(null);
+  const repInvMenuRef = useRef(null);
+  const repAccMenuRef = useRef(null);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -72,9 +89,14 @@ export default function MediProWorkspace({ onSwitchToModern }) {
     const handleClickOutside = (e) => {
       const inCatalogue = catalogueMenuRef.current && catalogueMenuRef.current.contains(e.target);
       const inPurchase = purchaseMenuRef.current && purchaseMenuRef.current.contains(e.target);
-      if (!inCatalogue && !inPurchase) {
+      const inSales = salesMenuRef.current && salesMenuRef.current.contains(e.target);
+      const inRepInv = repInvMenuRef.current && repInvMenuRef.current.contains(e.target);
+      const inRepAcc = repAccMenuRef.current && repAccMenuRef.current.contains(e.target);
+      if (!inCatalogue && !inPurchase && !inSales && !inRepInv && !inRepAcc) {
         setActiveMenu(null);
         setPurchaseSubmenuOpen(false);
+        setSalesSubmenuOpen(false);
+        setAccSubmenuOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -155,12 +177,198 @@ export default function MediProWorkspace({ onSwitchToModern }) {
         {/* Menu Items Row */}
         <div className="flex items-center justify-between px-1 py-0.5 relative text-[11px]">
           <div className="flex items-center gap-0.5 flex-wrap">
-            <button
-              onClick={() => setActiveMenu(activeMenu === 'sales' ? null : 'sales')}
-              className="px-2 py-0.5 hover:bg-[#316ac5] hover:text-white rounded-xs transition text-slate-900"
-            >
-              Sales-Department
-            </button>
+            {/* Sales-Department Menu with Dropdown & Flyout Submenu (Image 5) */}
+            <div className="relative" ref={salesMenuRef}>
+              <button
+                onClick={() => setActiveMenu(activeMenu === 'sales' ? null : 'sales')}
+                className={`px-2 py-0.5 rounded-xs transition font-semibold ${
+                  activeMenu === 'sales'
+                    ? 'bg-[#316ac5] text-white'
+                    : 'hover:bg-[#316ac5] hover:text-white text-slate-900'
+                }`}
+              >
+                Sales-Department
+              </button>
+
+              {activeMenu === 'sales' && (
+                <div className="absolute left-0 mt-0.5 w-60 bg-white border border-slate-400 shadow-xl py-0.5 z-50 text-slate-900 text-[11px] font-sans">
+                  <button
+                    onClick={() => {
+                      setActiveMenu(null);
+                      setGoodsSalesSectionOpen(true);
+                    }}
+                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white font-semibold text-blue-900"
+                  >
+                    Goods Sales Billing
+                  </button>
+
+                  {/* Issue Department with nested flyout submenu */}
+                  <div
+                    className="relative group/sub"
+                    onMouseEnter={() => setSalesSubmenuOpen(true)}
+                    onMouseLeave={() => setSalesSubmenuOpen(false)}
+                  >
+                    <div className="w-full px-3 py-1 hover:bg-[#316ac5] hover:text-white flex items-center justify-between cursor-pointer">
+                      <span>Issue Department</span>
+                      <span className="text-[9px]">▶</span>
+                    </div>
+
+                    {salesSubmenuOpen && (
+                      <div className="absolute left-full top-0 w-52 bg-white border border-slate-400 shadow-2xl py-0.5 z-60 text-slate-900 text-[11px] font-sans">
+                        <button
+                          onClick={() => { setActiveMenu(null); setSalesSubmenuOpen(false); alert('Department Issue Entry'); }}
+                          className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                        >
+                          Department Issue Entry
+                        </button>
+                        <button
+                          onClick={() => { setActiveMenu(null); setSalesSubmenuOpen(false); alert('Department Issue Return'); }}
+                          className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                        >
+                          Department Issue Return
+                        </button>
+                        <button
+                          onClick={() => { setActiveMenu(null); setSalesSubmenuOpen(false); alert('Department Issue Register'); }}
+                          className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                        >
+                          Department Issue Register
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                  <button
+                    onClick={() => { setActiveMenu(null); alert('Sales Reverse Entry'); }}
+                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                  >
+                    Sales Reverse Entry
+                  </button>
+                  <button
+                    onClick={() => { setActiveMenu(null); alert('Print Invoice'); }}
+                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                  >
+                    Print Invoice
+                  </button>
+                  <button
+                    onClick={() => { setActiveMenu(null); alert('Print Credit Note'); }}
+                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                  >
+                    Print Credit Note
+                  </button>
+
+                  <div className="border-t border-slate-200 my-0.5"></div>
+
+                  <button
+                    onClick={() => { setActiveMenu(null); alert('Sales / Sales-Retrun Register'); }}
+                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                  >
+                    Sales / Sales-Retrun Register
+                  </button>
+                  <button
+                    onClick={() => { setActiveMenu(null); alert('Organization Member Report'); }}
+                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                  >
+                    Organization Member Report
+                  </button>
+
+                  <div className="border-t border-slate-200 my-0.5"></div>
+
+                  <button
+                    onClick={() => {
+                      setActiveMenu(null);
+                      setUserwiseCashSummaryOpen(true);
+                    }}
+                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white font-semibold text-blue-900"
+                  >
+                    Userwise Cash Summary
+                  </button>
+                  <button
+                    onClick={() => { setActiveMenu(null); alert('Companywise Sales'); }}
+                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                  >
+                    Companywise Sales
+                  </button>
+                  <button
+                    onClick={() => { setActiveMenu(null); alert('Productwise Sales'); }}
+                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                  >
+                    Productwise Sales
+                  </button>
+                  <button
+                    onClick={() => { setActiveMenu(null); alert('Invoicewise Profit/Loss'); }}
+                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                  >
+                    Invoicewise Profit/Loss
+                  </button>
+
+                  <div className="border-t border-slate-200 my-0.5"></div>
+
+                  <button
+                    onClick={() => { setActiveMenu(null); alert('IPD Requisition Book'); }}
+                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                  >
+                    IPD Requisition Book
+                  </button>
+                  <button
+                    onClick={() => { setActiveMenu(null); alert('Cash To Teller'); }}
+                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                  >
+                    Cash To Teller
+                  </button>
+                  <button
+                    onClick={() => { setActiveMenu(null); alert('Cash Hand Over'); }}
+                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                  >
+                    Cash Hand Over
+                  </button>
+                  <button
+                    onClick={() => { setActiveMenu(null); alert('Army Report'); }}
+                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                  >
+                    Army Report
+                  </button>
+                  <button
+                    onClick={() => { setActiveMenu(null); alert('IPD Requisition Print'); }}
+                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                  >
+                    IPD Requisition Print
+                  </button>
+                  <button
+                    onClick={() => { setActiveMenu(null); alert('Requisition Form'); }}
+                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                  >
+                    Requisition Form
+                  </button>
+
+                  <div className="border-t border-slate-200 my-0.5"></div>
+
+                  <button
+                    onClick={() => { setActiveMenu(null); alert('Cash From Cashier'); }}
+                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                  >
+                    Cash From Cashier
+                  </button>
+                  <button
+                    onClick={() => { setActiveMenu(null); alert('Cash From Teller'); }}
+                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                  >
+                    Cash From Teller
+                  </button>
+                  <button
+                    onClick={() => { setActiveMenu(null); alert('Teller Report'); }}
+                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                  >
+                    Teller Report
+                  </button>
+                  <button
+                    onClick={() => { setActiveMenu(null); alert('Cash Collection Report'); }}
+                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                  >
+                    Cash Collection Report
+                  </button>
+                </div>
+              )}
+            </div>
 
             {/* Purchase-Department Menu with Dropdown & Flyout Submenu (Image 2) */}
             <div className="relative" ref={purchaseMenuRef}>
@@ -340,18 +548,154 @@ export default function MediProWorkspace({ onSwitchToModern }) {
             >
               Account-Department
             </button>
-            <button
-              onClick={() => setActiveMenu(activeMenu === 'rep_inv' ? null : 'rep_inv')}
-              className="px-2 py-0.5 hover:bg-[#316ac5] hover:text-white rounded-xs transition text-slate-900"
-            >
-              Reports-Inventory
-            </button>
-            <button
-              onClick={() => setActiveMenu(activeMenu === 'rep_acc' ? null : 'rep_acc')}
-              className="px-2 py-0.5 hover:bg-[#316ac5] hover:text-white rounded-xs transition text-slate-900"
-            >
-              Reports-Account
-            </button>
+            {/* Reports-Inventory Menu with Dropdown (Image 2) */}
+            <div className="relative" ref={repInvMenuRef}>
+              <button
+                onClick={() => setActiveMenu(activeMenu === 'rep_inv' ? null : 'rep_inv')}
+                className={`px-2 py-0.5 rounded-xs transition font-semibold ${
+                  activeMenu === 'rep_inv'
+                    ? 'bg-[#316ac5] text-white'
+                    : 'hover:bg-[#316ac5] hover:text-white text-slate-900'
+                }`}
+              >
+                Reports-Inventory
+              </button>
+
+              {activeMenu === 'rep_inv' && (
+                <div className="absolute left-0 mt-0.5 w-52 bg-white border border-slate-400 shadow-xl py-0.5 z-50 text-slate-900 text-[11px] font-sans">
+                  <button
+                    onClick={() => { setActiveMenu(null); alert('Stock/Sales Summary'); }}
+                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                  >
+                    Stock/Sales Summary
+                  </button>
+                  <button
+                    onClick={() => { setActiveMenu(null); alert('Stock Register'); }}
+                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                  >
+                    Stock Register
+                  </button>
+                  <button
+                    onClick={() => { setActiveMenu(null); alert('Partywise Stock Register'); }}
+                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                  >
+                    Partywise Stock Register
+                  </button>
+                  <button
+                    onClick={() => {
+                      setActiveMenu(null);
+                      setStockBalanceOpen(true);
+                    }}
+                    className="w-full text-left px-3 py-1.5 hover:bg-[#316ac5] hover:text-white font-bold text-blue-900 flex items-center justify-between"
+                  >
+                    <span>Stock Balance</span>
+                  </button>
+                  <button
+                    onClick={() => { setActiveMenu(null); alert('Stock Analysis'); }}
+                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                  >
+                    Stock Analysis
+                  </button>
+                  <button
+                    onClick={() => { setActiveMenu(null); alert('Stock MIS'); }}
+                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                  >
+                    Stock MIS
+                  </button>
+                  <button
+                    onClick={() => { setActiveMenu(null); alert('Maximum Sales'); }}
+                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                  >
+                    Maximum Sales
+                  </button>
+                  <button
+                    onClick={() => { setActiveMenu(null); alert('Expiry Stock Register'); }}
+                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                  >
+                    Expiry Stock Register
+                  </button>
+                  <button
+                    onClick={() => { setActiveMenu(null); alert('Expiry Stock Balance'); }}
+                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                  >
+                    Expiry Stock Balance
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Reports-Account Menu with Dropdown & Flyout Submenu (Image 1) */}
+            <div className="relative" ref={repAccMenuRef}>
+              <button
+                onClick={() => setActiveMenu(activeMenu === 'rep_acc' ? null : 'rep_acc')}
+                className={`px-2 py-0.5 rounded-xs transition font-semibold ${
+                  activeMenu === 'rep_acc'
+                    ? 'bg-[#316ac5] text-white'
+                    : 'hover:bg-[#316ac5] hover:text-white text-slate-900'
+                }`}
+              >
+                Reports-Account
+              </button>
+
+              {activeMenu === 'rep_acc' && (
+                <div className="absolute left-0 mt-0.5 w-48 bg-white border border-slate-400 shadow-xl py-0.5 z-50 text-slate-900 text-[11px] font-sans">
+                  {/* General Ledger with flyout submenu */}
+                  <div
+                    className="relative group/sub"
+                    onMouseEnter={() => setAccSubmenuOpen(true)}
+                    onMouseLeave={() => setAccSubmenuOpen(false)}
+                  >
+                    <div
+                      onClick={() => {
+                        setActiveMenu(null);
+                        setAccSubmenuOpen(false);
+                        alert('General Ledger');
+                      }}
+                      className="w-full px-3 py-1 hover:bg-[#316ac5] hover:text-white flex items-center justify-between cursor-pointer"
+                    >
+                      <span>General Ledger</span>
+                      <span className="text-[9px]">▶</span>
+                    </div>
+
+                    {accSubmenuOpen && (
+                      <div className="absolute left-full top-0 w-48 bg-white border border-slate-400 shadow-2xl py-0.5 z-60 text-slate-900 text-[11px] font-sans">
+                        <button
+                          onClick={() => { setActiveMenu(null); setAccSubmenuOpen(false); alert('General Ledger'); }}
+                          className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                        >
+                          General Ledger
+                        </button>
+                        <button
+                          onClick={() => { setActiveMenu(null); setAccSubmenuOpen(false); alert('Party Ledger'); }}
+                          className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                        >
+                          Party Ledger
+                        </button>
+                        <button
+                          onClick={() => { setActiveMenu(null); setAccSubmenuOpen(false); alert('Cash / Bank Book'); }}
+                          className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                        >
+                          Cash / Bank Book
+                        </button>
+                        <button
+                          onClick={() => { setActiveMenu(null); setAccSubmenuOpen(false); alert('Daily Transaction Report'); }}
+                          className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                        >
+                          Daily Transaction Report
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                  <button
+                    onClick={() => { setActiveMenu(null); alert('Debtor Section'); }}
+                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                  >
+                    Debtor Section
+                  </button>
+                </div>
+              )}
+            </div>
 
             {/* Catalogue Menu with Dropdown (Image 2) */}
             <div className="relative" ref={catalogueMenuRef}>
@@ -468,66 +812,157 @@ export default function MediProWorkspace({ onSwitchToModern }) {
 
         {/* Central Watermark & MediKing Logo Area */}
         <div className="flex-1 px-8 py-6 flex flex-col md:flex-row items-center justify-between relative">
-          {/* Left: Department Watermark text (Courier/Typewriter blue font like Image 1) */}
+          {/* Left: Department Watermark text or Goods Sales Billing section (Image 1) */}
           <div className="mb-8 md:mb-0">
-            <div className="font-mono text-lg sm:text-xl text-[#2b4c7e] font-semibold tracking-wider select-none">
-              Pharmacy Department
-            </div>
-            <div className="text-xs text-slate-400 mt-2 font-mono">
-              Terminal: POS-01 • Branch: {currentBranch?.code || 'MK-KTM'}
-            </div>
+            {goodsSalesSectionOpen ? (
+              /* Exact reproduction of Image 1 */
+              <div className="space-y-4 font-mono select-none">
+                <div className="flex items-center gap-4 text-xs font-sans text-slate-800">
+                  <label className="flex items-center gap-1.5 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={forInsurance}
+                      onChange={(e) => setForInsurance(e.target.checked)}
+                      className="accent-blue-700"
+                    />
+                    <span className="font-semibold">For Insurance</span>
+                  </label>
+                  <label className="flex items-center gap-1.5 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={forSSF}
+                      onChange={(e) => setForSSF(e.target.checked)}
+                      className="accent-blue-700"
+                    />
+                    <span className="font-semibold">SSF</span>
+                  </label>
+                </div>
 
-            {/* Quick Action Buttons */}
-            <div className="mt-6 flex flex-wrap items-center gap-2">
-              <button
-                onClick={() => setProductListOpen(true)}
-                className="px-3.5 py-1.5 bg-gradient-to-b from-[#f9f9f9] to-[#e4e4e4] hover:from-white hover:to-[#d8d8d8] border border-slate-400 rounded-xs text-xs font-bold text-slate-800 shadow-sm active:translate-y-0.5 flex items-center gap-1.5"
-                title="Open Master Drug Catalog (F3)"
-              >
-                <Pill size={14} className="text-teal-600" />
-                <span>Drug Catalogue (F3)</span>
-              </button>
-              <button
-                onClick={() => handleCatalogueSelect('drug_setup')}
-                className="px-3.5 py-1.5 bg-gradient-to-b from-[#f9f9f9] to-[#e4e4e4] hover:from-white hover:to-[#d8d8d8] border border-slate-400 rounded-xs text-xs font-bold text-slate-800 shadow-sm active:translate-y-0.5 flex items-center gap-1.5"
-                title="Open Drug Setup Categories"
-              >
-                <Boxes size={14} className="text-blue-600" />
-                <span>Drug Setup Category</span>
-              </button>
-              <button
-                onClick={() => setCompanySetupOpen(true)}
-                className="px-3.5 py-1.5 bg-gradient-to-b from-[#f9f9f9] to-[#e4e4e4] hover:from-white hover:to-[#d8d8d8] border border-slate-400 rounded-xs text-xs font-bold text-slate-800 shadow-sm active:translate-y-0.5 flex items-center gap-1.5"
-                title="Open Company Master (Image 1 / F6)"
-              >
-                <span>🏢</span>
-                <span>Company Setup (F6)</span>
-              </button>
-              <button
-                onClick={() => setPurchaseEntryOpen(true)}
-                className="px-3.5 py-1.5 bg-gradient-to-b from-[#fff3f3] to-[#ffdada] hover:from-white hover:to-[#ffc8c8] border border-rose-400 rounded-xs text-xs font-bold text-rose-900 shadow-sm active:translate-y-0.5 flex items-center gap-1.5"
-                title="Open Purchase Entry (Image 3 / F7)"
-              >
-                <ShoppingCart size={14} className="text-rose-700" />
-                <span>Purchase Entry (F7)</span>
-              </button>
-              <button
-                onClick={() => setPurchaseRegisterOpen(true)}
-                className="px-3.5 py-1.5 bg-gradient-to-b from-[#f9f9f9] to-[#e4e4e4] hover:from-white hover:to-[#d8d8d8] border border-slate-400 rounded-xs text-xs font-bold text-slate-800 shadow-sm active:translate-y-0.5 flex items-center gap-1.5"
-                title="Open Purchase Register (Image 4 / F8)"
-              >
-                <Receipt size={14} className="text-indigo-600" />
-                <span>Purchase Register (F8)</span>
-              </button>
-              <button
-                onClick={() => setPurchaseBookOpen(true)}
-                className="px-3.5 py-1.5 bg-gradient-to-b from-[#f0f4ff] to-[#d9e2ec] hover:from-white hover:to-[#bcccdc] border border-blue-400 rounded-xs text-xs font-bold text-blue-950 shadow-sm active:translate-y-0.5 flex items-center gap-1.5"
-                title="Open Purchase Book directly (Image 5)"
-              >
-                <span>📖</span>
-                <span>Purchase Book</span>
-              </button>
-            </div>
+                <div className="flex flex-col space-y-2 pt-1 text-[#0066cc] text-sm font-mono tracking-wide">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setCashSalesReturn(false);
+                      setCashSalesOpen(true);
+                    }}
+                    className="text-left hover:underline cursor-pointer font-bold"
+                  >
+                    Sales Billing
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setCashSalesReturn(false);
+                      setCashSalesOpen(true);
+                    }}
+                    className="text-left hover:underline cursor-pointer font-bold"
+                  >
+                    Sales Billing (Batch)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setCashSalesReturn(false);
+                      setCashSalesOpen(true);
+                    }}
+                    className="text-left hover:underline cursor-pointer font-bold"
+                  >
+                    Sales Billing Open
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setCashSalesReturn(true);
+                      setCashSalesOpen(true);
+                    }}
+                    className="text-left hover:underline cursor-pointer font-bold text-rose-700"
+                  >
+                    Sales Return
+                  </button>
+                </div>
+
+                <div className="pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setGoodsSalesSectionOpen(false)}
+                    className="text-[10px] text-slate-400 hover:text-slate-700 underline font-sans"
+                  >
+                    ← Back to Department Home
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div>
+                <div className="font-mono text-lg sm:text-xl text-[#2b4c7e] font-semibold tracking-wider select-none">
+                  Pharmacy Department
+                </div>
+                <div className="text-xs text-slate-400 mt-2 font-mono">
+                  Terminal: POS-01 • Branch: {currentBranch?.code || 'MK-KTM'}
+                </div>
+
+                {/* Quick Action Buttons */}
+                <div className="mt-6 flex flex-wrap items-center gap-2">
+                  <button
+                    onClick={() => {
+                      setGoodsSalesSectionOpen(true);
+                    }}
+                    className="px-3.5 py-1.5 bg-gradient-to-b from-[#e6f0ff] to-[#c8ddff] hover:from-white hover:to-[#b6d2ff] border border-blue-500 rounded-xs text-xs font-bold text-blue-900 shadow-sm active:translate-y-0.5 flex items-center gap-1.5"
+                    title="Open Goods Sales Billing (Image 1)"
+                  >
+                    <span>💳</span>
+                    <span>Goods Sales Billing</span>
+                  </button>
+                  <button
+                    onClick={() => setProductListOpen(true)}
+                    className="px-3.5 py-1.5 bg-gradient-to-b from-[#f9f9f9] to-[#e4e4e4] hover:from-white hover:to-[#d8d8d8] border border-slate-400 rounded-xs text-xs font-bold text-slate-800 shadow-sm active:translate-y-0.5 flex items-center gap-1.5"
+                    title="Open Master Drug Catalog (F3)"
+                  >
+                    <Pill size={14} className="text-teal-600" />
+                    <span>Drug Catalogue (F3)</span>
+                  </button>
+                  <button
+                    onClick={() => handleCatalogueSelect('drug_setup')}
+                    className="px-3.5 py-1.5 bg-gradient-to-b from-[#f9f9f9] to-[#e4e4e4] hover:from-white hover:to-[#d8d8d8] border border-slate-400 rounded-xs text-xs font-bold text-slate-800 shadow-sm active:translate-y-0.5 flex items-center gap-1.5"
+                    title="Open Drug Setup Categories"
+                  >
+                    <Boxes size={14} className="text-blue-600" />
+                    <span>Drug Setup Category</span>
+                  </button>
+                  <button
+                    onClick={() => setCompanySetupOpen(true)}
+                    className="px-3.5 py-1.5 bg-gradient-to-b from-[#f9f9f9] to-[#e4e4e4] hover:from-white hover:to-[#d8d8d8] border border-slate-400 rounded-xs text-xs font-bold text-slate-800 shadow-sm active:translate-y-0.5 flex items-center gap-1.5"
+                    title="Open Company Master (Image 1 / F6)"
+                  >
+                    <span>🏢</span>
+                    <span>Company Setup (F6)</span>
+                  </button>
+                  <button
+                    onClick={() => setPurchaseEntryOpen(true)}
+                    className="px-3.5 py-1.5 bg-gradient-to-b from-[#fff3f3] to-[#ffdada] hover:from-white hover:to-[#ffc8c8] border border-rose-400 rounded-xs text-xs font-bold text-rose-900 shadow-sm active:translate-y-0.5 flex items-center gap-1.5"
+                    title="Open Purchase Entry (Image 3 / F7)"
+                  >
+                    <ShoppingCart size={14} className="text-rose-700" />
+                    <span>Purchase Entry (F7)</span>
+                  </button>
+                  <button
+                    onClick={() => setPurchaseRegisterOpen(true)}
+                    className="px-3.5 py-1.5 bg-gradient-to-b from-[#f9f9f9] to-[#e4e4e4] hover:from-white hover:to-[#d8d8d8] border border-slate-400 rounded-xs text-xs font-bold text-slate-800 shadow-sm active:translate-y-0.5 flex items-center gap-1.5"
+                    title="Open Purchase Register (Image 4 / F8)"
+                  >
+                    <Receipt size={14} className="text-indigo-600" />
+                    <span>Purchase Register (F8)</span>
+                  </button>
+                  <button
+                    onClick={() => setPurchaseBookOpen(true)}
+                    className="px-3.5 py-1.5 bg-gradient-to-b from-[#f0f4ff] to-[#d9e2ec] hover:from-white hover:to-[#bcccdc] border border-blue-400 rounded-xs text-xs font-bold text-blue-950 shadow-sm active:translate-y-0.5 flex items-center gap-1.5"
+                    title="Open Purchase Book directly (Image 5)"
+                  >
+                    <span>📖</span>
+                    <span>Purchase Book</span>
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Right: The iconic MediPro / MediKing Emblem (Image 1) */}
@@ -619,6 +1054,39 @@ export default function MediProWorkspace({ onSwitchToModern }) {
         isOpen={purchaseBookOpen}
         onClose={() => setPurchaseBookOpen(false)}
         initialDateRange={purchaseBookDateRange}
+      />
+
+      {/* Stock Balance Function Dialog (Image 3) */}
+      <StockBalanceModal
+        isOpen={stockBalanceOpen}
+        onClose={() => setStockBalanceOpen(false)}
+        onOpenReport={() => {
+          setStockBalanceOpen(false);
+          setStockValuationOpen(true);
+        }}
+      />
+
+      {/* Stock Balance At / Valuation Report Window (Image 4) */}
+      <StockBalanceValuationModal
+        isOpen={stockValuationOpen}
+        onClose={() => setStockValuationOpen(false)}
+        initialDate={bsDate.formatted || '2078/05/14'}
+      />
+
+      {/* Cash Sales & Sales Return Modal (Image 2 & 3) */}
+      <CashSalesModal
+        isOpen={cashSalesOpen}
+        onClose={() => setCashSalesOpen(false)}
+        isReturn={cashSalesReturn}
+        initialDateBs={bsDate.formatted || '2078/05/14'}
+      />
+
+      {/* Userwise Cash Summary Modal (Image 4) */}
+      <UserwiseCashSummaryModal
+        isOpen={userwiseCashSummaryOpen}
+        onClose={() => setUserwiseCashSummaryOpen(false)}
+        initialFromDate="2078/05/01"
+        initialToDate={bsDate.formatted || '2078/05/14'}
       />
     </div>
   );
