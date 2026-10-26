@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import MediProWorkspace from '../components/medipro/MediProWorkspace';
+import ApplicationLauncher from '../components/medipro/ApplicationLauncher';
+import AttendanceWorkspace from '../components/medipro/AttendanceWorkspace';
 import {
   Users,
   Stethoscope,
@@ -35,7 +37,7 @@ export default function Dashboard() {
   const onOpenDrugSetup = outletContext?.onOpenDrugSetup;
 
   const [viewMode, setViewMode] = useState(() => {
-    return localStorage.getItem('mediking_view_mode') || 'medipro';
+    return localStorage.getItem('mediking_view_mode') || 'launcher';
   });
 
   const handleSwitchMode = (mode) => {
@@ -46,7 +48,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     const handleModeChange = (e) => {
-      setViewMode(e.detail || localStorage.getItem('mediking_view_mode') || 'medipro');
+      setViewMode(e.detail || localStorage.getItem('mediking_view_mode') || 'launcher');
     };
     window.addEventListener('view-mode-changed', handleModeChange);
     return () => window.removeEventListener('view-mode-changed', handleModeChange);
@@ -111,8 +113,21 @@ export default function Dashboard() {
   const { summary, lowStockAlerts, expiryAlerts, activeOpdQueue, recentPharmacySales } = data || {};
 
   // When in MediPro desktop mode, render the full-screen desktop workspace (Image 1)
+  if (viewMode === 'launcher') {
+    return <ApplicationLauncher onSelect={handleSwitchMode} />;
+  }
+
+  if (viewMode === 'attendance') {
+    return <AttendanceWorkspace onBackToLauncher={() => handleSwitchMode('launcher')} />;
+  }
+
   if (viewMode === 'medipro') {
-    return <MediProWorkspace onSwitchToModern={() => handleSwitchMode('modern')} />;
+    return (
+      <MediProWorkspace
+        onSwitchToModern={() => handleSwitchMode('modern')}
+        onSwitchToLauncher={() => handleSwitchMode('launcher')}
+      />
+    );
   }
 
   return (

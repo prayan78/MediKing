@@ -14,7 +14,7 @@ export default function AppLayout() {
   const [drugSetupOpen, setDrugSetupOpen] = useState(false);
 
   const [viewMode, setViewMode] = useState(() => {
-    return localStorage.getItem('mediking_view_mode') || 'medipro';
+    return localStorage.getItem('mediking_view_mode') || 'launcher';
   });
 
   useEffect(() => {
@@ -35,7 +35,7 @@ export default function AppLayout() {
   };
 
   // Full screen MediPro Desktop UI without letterbox empty space
-  if (viewMode === 'medipro') {
+  if (viewMode === 'medipro' || viewMode === 'attendance' || viewMode === 'launcher') {
     return (
       <div className="h-screen w-screen overflow-hidden bg-[#ece9d8]">
         <Outlet

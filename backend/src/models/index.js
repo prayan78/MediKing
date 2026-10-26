@@ -13,6 +13,7 @@ const AuditLog = require('./AuditLog');
 const SystemSetting = require('./SystemSetting');
 const Company = require('./Company');
 const PurchaseEntry = require('./PurchaseEntry');
+const WeeklyRoster = require('./WeeklyRoster');
 
 module.exports = {
   User,
@@ -30,5 +31,5 @@ module.exports = {
   SystemSetting,
   Company,
   PurchaseEntry,
+  WeeklyRoster,
 };
-

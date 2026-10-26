@@ -39,6 +39,7 @@ export const AuthProvider = ({ children }) => {
     const { token: newToken, user: newUser } = res.data;
     
     localStorage.setItem('mediking_token', newToken);
+    localStorage.setItem('mediking_view_mode', 'launcher');
     setToken(newToken);
     setUser(newUser);
     setCurrentBranch(newUser.branch);
@@ -59,6 +60,7 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     localStorage.removeItem('mediking_token');
     localStorage.removeItem('mediking_user');
+    localStorage.removeItem('mediking_view_mode');
     setToken(null);
     setUser(null);
     setCurrentBranch(null);
@@ -96,4 +98,3 @@ export const AuthProvider = ({ children }) => {
 };
 
 export const useAuth = () => useContext(AuthContext);
-

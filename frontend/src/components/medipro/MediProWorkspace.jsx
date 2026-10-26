@@ -22,7 +22,7 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-export default function MediProWorkspace({ onSwitchToModern }) {
+export default function MediProWorkspace({ onSwitchToModern, onSwitchToLauncher }) {
   const { user, currentBranch, logout } = useAuth();
   const navigate = useNavigate();
 
@@ -55,6 +55,7 @@ export default function MediProWorkspace({ onSwitchToModern }) {
   const [currentTime, setCurrentTime] = useState(new Date());
 
   const catalogueMenuRef = useRef(null);
+  const appMenuRef = useRef(null);
   const medicineMenuRef = useRef(null);
   const purchaseMenuRef = useRef(null);
   const salesMenuRef = useRef(null);
@@ -93,12 +94,13 @@ export default function MediProWorkspace({ onSwitchToModern }) {
   useEffect(() => {
     const handleClickOutside = (e) => {
       const inCatalogue = catalogueMenuRef.current && catalogueMenuRef.current.contains(e.target);
+      const inAppMenu = appMenuRef.current && appMenuRef.current.contains(e.target);
       const inMedicine = medicineMenuRef.current && medicineMenuRef.current.contains(e.target);
       const inPurchase = purchaseMenuRef.current && purchaseMenuRef.current.contains(e.target);
       const inSales = salesMenuRef.current && salesMenuRef.current.contains(e.target);
       const inRepInv = repInvMenuRef.current && repInvMenuRef.current.contains(e.target);
       const inRepAcc = repAccMenuRef.current && repAccMenuRef.current.contains(e.target);
-      if (!inCatalogue && !inMedicine && !inPurchase && !inSales && !inRepInv && !inRepAcc) {
+      if (!inCatalogue && !inAppMenu && !inMedicine && !inPurchase && !inSales && !inRepInv && !inRepAcc) {
         setActiveMenu(null);
         setPurchaseSubmenuOpen(false);
         setSalesSubmenuOpen(false);
@@ -183,6 +185,27 @@ export default function MediProWorkspace({ onSwitchToModern }) {
         {/* Menu Items Row */}
         <div className="flex items-center justify-between px-1 py-0.5 relative text-[11px]">
           <div className="flex items-center gap-0.5 flex-wrap">
+            <div className="relative" ref={appMenuRef}>
+              <button
+                onClick={() => setActiveMenu(activeMenu === 'app' ? null : 'app')}
+                className={`px-2 py-0.5 rounded-xs transition font-semibold ${
+                  activeMenu === 'app' ? 'bg-[#316ac5] text-white' : 'hover:bg-[#316ac5] hover:text-white text-slate-900'
+                }`}
+              >
+                Menu
+              </button>
+              {activeMenu === 'app' && (
+                <div className="absolute left-0 mt-0.5 w-48 bg-white border border-slate-400 shadow-xl py-0.5 z-50 text-slate-900 text-[11px] font-sans">
+                  <button
+                    onClick={() => { setActiveMenu(null); onSwitchToLauncher?.(); }}
+                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                  >
+                    Application Selection
+                  </button>
+                </div>
+              )}
+            </div>
+
             {/* Sales-Department Menu with Dropdown & Flyout Submenu (Image 5) */}
             <div className="relative" ref={salesMenuRef}>
               <button
