@@ -1,4 +1,107 @@
 const MedicineMaster = require('../models/MedicineMaster');
+const MedicineBatch = require('../models/MedicineBatch');
+const GenericMedicine = require('../models/GenericMedicine');
+
+exports.getGenericMedicines = async (req, res, next) => {
+  try {
+    const branch = req.user.branch?._id || req.user.branch;
+    const [medicines, batchStocks, savedGenerics] = await Promise.all([
+      MedicineMaster.find({ status: 'Active' })
+        .select('mdCode brandName genericName generics unit wsUnit rackNo roLevel bonus cPrice mrp sPrice vatPercent')
+        .sort({ brandName: 1 })
+        .lean(),
+      branch
+        ? MedicineBatch.aggregate([
+            { $match: { branch } },
+            { $group: { _id: '$medicine', quantity: { $sum: '$currentStock' } } },
+          ])
+        : Promise.resolve([]),
+      GenericMedicine.find().select('genericName').sort({ genericName: 1 }).lean(),
+    ]);
+
+    const stockByMedicine = new Map(
+      batchStocks.map((stock) => [stock._id.toString(), stock.quantity])
+    );
+    const genericGroups = new Map();
+
+    savedGenerics.forEach(({ genericName }) => {
+      const key = genericName.trim().toLocaleUpperCase();
+      if (key && !genericGroups.has(key)) {
+        genericGroups.set(key, { genericName: genericName.trim(), brands: [] });
+      }
+    });
+
+    medicines.forEach((medicine) => {
+      const names = Array.isArray(medicine.generics) && medicine.generics.length
+        ? medicine.generics.map((generic) => generic.genericName)
+        : (medicine.genericName || '').split(',');
+      const uniqueNames = new Map();
+      names.forEach((name) => {
+        const displayName = name?.trim();
+        if (displayName) uniqueNames.set(displayName.toLocaleUpperCase(), displayName);
+      });
+
+      uniqueNames.forEach((displayName, key) => {
+        if (!genericGroups.has(key)) {
+          genericGroups.set(key, { genericName: displayName, brands: [] });
+        }
+        genericGroups.get(key).brands.push({
+          ...medicine,
+          currentStock: stockByMedicine.get(medicine._id.toString()) || 0,
+        });
+      });
+    });
+
+    res.json({
+      success: true,
+      data: [...genericGroups.values()].sort((a, b) => a.genericName.localeCompare(b.genericName)),
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.createGenericMedicine = async (req, res, next) => {
+  try {
+    const genericName = typeof req.body.genericName === 'string'
+      ? req.body.genericName.trim().replace(/\s+/g, ' ')
+      : '';
+
+    if (!genericName) {
+      return res.status(400).json({ success: false, message: 'Generic name is required.' });
+    }
+
+    const normalizedName = genericName.toLocaleUpperCase();
+    const escapedName = normalizedName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const [existingGeneric, existingMedicine] = await Promise.all([
+      GenericMedicine.findOne({
+        genericName: { $regex: `^${escapedName}$`, $options: 'i' },
+      }),
+      MedicineMaster.findOne({
+        $or: [
+          { genericName: { $regex: `(^|,\\s*)${escapedName}(\\s*,|$)`, $options: 'i' } },
+          { 'generics.genericName': { $regex: `^${escapedName}$`, $options: 'i' } },
+        ],
+      }),
+    ]);
+    const existing = existingGeneric || existingMedicine;
+    if (existing) {
+      return res.status(409).json({ success: false, message: 'This generic name already exists.' });
+    }
+
+    const genericMedicine = await GenericMedicine.create({ genericName: normalizedName });
+    res.status(201).json({
+      success: true,
+      message: 'Generic name added successfully.',
+      data: { genericName: genericMedicine.genericName, brands: [] },
+    });
+  } catch (error) {
+    if (error.code === 11000) {
+      return res.status(409).json({ success: false, message: 'This generic name already exists.' });
+    }
+    next(error);
+  }
+};
 
 // @desc    Get all products with search & filters
 // @route   GET /api/products
@@ -215,4 +318,3 @@ exports.deleteProduct = async (req, res, next) => {
     next(error);
   }
 };
-

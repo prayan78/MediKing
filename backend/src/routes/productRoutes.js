@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const {
+  getGenericMedicines,
+  createGenericMedicine,
   getProducts,
   getProductById,
   createProduct,
@@ -10,6 +12,8 @@ const {
 } = require('../controllers/productController');
 const { protect } = require('../middleware/auth');
 
+router.get('/generic-medicines', protect, getGenericMedicines);
+router.post('/generic-medicines', protect, createGenericMedicine);
 router.get('/', protect, getProducts);
 router.get('/:id', protect, getProductById);
 router.post('/', protect, createProduct);
@@ -18,4 +22,3 @@ router.patch('/:id/toggle-status', protect, toggleStatus);
 router.delete('/:id', protect, deleteProduct);
 
 module.exports = router;
-

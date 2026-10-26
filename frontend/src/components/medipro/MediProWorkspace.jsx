@@ -12,6 +12,7 @@ import StockBalanceValuationModal from './StockBalanceValuationModal';
 import CashSalesModal from './CashSalesModal';
 import UserwiseCashSummaryModal from './UserwiseCashSummaryModal';
 import SalesReportModal from './SalesReportModal';
+import GenericMedicineModal from './GenericMedicineModal';
 import {
   Pill,
   ShoppingCart,
@@ -48,11 +49,13 @@ export default function MediProWorkspace({ onSwitchToModern }) {
   const [forSSF, setForSSF] = useState(false);
   const [userwiseCashSummaryOpen, setUserwiseCashSummaryOpen] = useState(false);
   const [salesReportOpen, setSalesReportOpen] = useState(false);
+  const [genericMedicineOpen, setGenericMedicineOpen] = useState(false);
 
   // Live Clock & Dates
   const [currentTime, setCurrentTime] = useState(new Date());
 
   const catalogueMenuRef = useRef(null);
+  const medicineMenuRef = useRef(null);
   const purchaseMenuRef = useRef(null);
   const salesMenuRef = useRef(null);
   const repInvMenuRef = useRef(null);
@@ -90,11 +93,12 @@ export default function MediProWorkspace({ onSwitchToModern }) {
   useEffect(() => {
     const handleClickOutside = (e) => {
       const inCatalogue = catalogueMenuRef.current && catalogueMenuRef.current.contains(e.target);
+      const inMedicine = medicineMenuRef.current && medicineMenuRef.current.contains(e.target);
       const inPurchase = purchaseMenuRef.current && purchaseMenuRef.current.contains(e.target);
       const inSales = salesMenuRef.current && salesMenuRef.current.contains(e.target);
       const inRepInv = repInvMenuRef.current && repInvMenuRef.current.contains(e.target);
       const inRepAcc = repAccMenuRef.current && repAccMenuRef.current.contains(e.target);
-      if (!inCatalogue && !inPurchase && !inSales && !inRepInv && !inRepAcc) {
+      if (!inCatalogue && !inMedicine && !inPurchase && !inSales && !inRepInv && !inRepAcc) {
         setActiveMenu(null);
         setPurchaseSubmenuOpen(false);
         setSalesSubmenuOpen(false);
@@ -768,6 +772,32 @@ export default function MediProWorkspace({ onSwitchToModern }) {
               )}
             </div>
 
+            <div className="relative" ref={medicineMenuRef}>
+              <button
+                onClick={() => setActiveMenu(activeMenu === 'medicine' ? null : 'medicine')}
+                className={`px-2 py-0.5 rounded-xs transition font-semibold ${
+                  activeMenu === 'medicine'
+                    ? 'bg-[#316ac5] text-white'
+                    : 'hover:bg-[#316ac5] hover:text-white text-slate-900'
+                }`}
+              >
+                Medicine
+              </button>
+              {activeMenu === 'medicine' && (
+                <div className="absolute left-0 mt-0.5 w-44 bg-white border border-slate-400 shadow-xl py-0.5 z-50 text-slate-900 text-[11px] font-sans">
+                  <button
+                    onClick={() => {
+                      setActiveMenu(null);
+                      setGenericMedicineOpen(true);
+                    }}
+                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                  >
+                    Generic Medicine
+                  </button>
+                </div>
+              )}
+            </div>
+
             <button
               onClick={() => setActiveMenu(activeMenu === 'maint' ? null : 'maint')}
               className="px-2 py-0.5 hover:bg-[#316ac5] hover:text-white rounded-xs transition text-slate-900"
@@ -1100,6 +1130,11 @@ export default function MediProWorkspace({ onSwitchToModern }) {
       <SalesReportModal
         isOpen={salesReportOpen}
         onClose={() => setSalesReportOpen(false)}
+      />
+
+      <GenericMedicineModal
+        isOpen={genericMedicineOpen}
+        onClose={() => setGenericMedicineOpen(false)}
       />
     </div>
   );
