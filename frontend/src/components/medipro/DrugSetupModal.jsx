@@ -1,15 +1,14 @@
 import React, { useState } from 'react';
-import { X } from 'lucide-react';
 
 const categories = [
-  { id: 'company_setup', label: 'Company Setup' },
+  { id: 'company_setup', label: 'Company Setup', enabled: true },
   { id: 'drug_category_setup', label: 'Drug Category Setup' },
   { id: 'drug_group_setup', label: 'Drug Group Setup' },
-  { id: 'generic_name_setup', label: 'Generice Name Setup' },
+  { id: 'generic_name_setup', label: 'Generic Name Setup', enabled: true },
   { id: 'product_division_setup', label: 'Product Division Setup' },
   { id: 'product_rack_group_setup', label: 'Product Rack Group Setup' },
   { id: 'product_rack_setup', label: 'Product Rack Setup' },
-  { id: 'product_setup', label: 'Product Setup' }, // default
+  { id: 'product_setup', label: 'Product Setup', enabled: true }, // default
   { id: 'open_stock_entry', label: 'Open Stock Entry' },
   { id: 'open_stock_list', label: 'Open Stock List' },
   { id: 'sales_template_setup', label: 'Sales Template Setup' },
@@ -48,7 +47,7 @@ export default function DrugSetupModal({ isOpen, onClose, onSelectCategory }) {
 
         {/* Sub-menu bar */}
         <div className="bg-[#f0f0f0] border-b border-slate-300 px-2 py-0.5 text-[11px] text-slate-700">
-          <span className="underline cursor-pointer hover:bg-blue-100 px-1">Function</span>
+          <span className="px-1 text-slate-400">Function</span>
         </div>
 
         {/* Options List */}
@@ -56,13 +55,19 @@ export default function DrugSetupModal({ isOpen, onClose, onSelectCategory }) {
           {categories.map((cat) => (
             <label
               key={cat.id}
-              className={`flex items-center gap-2 px-1.5 py-0.5 rounded cursor-pointer select-none text-xs hover:bg-[#316ac5] hover:text-white group ${
-                selected === cat.id ? 'bg-[#316ac5] text-white font-semibold' : 'text-slate-800'
+              className={`flex items-center gap-2 px-1.5 py-0.5 rounded select-none text-xs ${
+                cat.enabled
+                  ? `cursor-pointer hover:bg-[#316ac5] hover:text-white ${
+                    selected === cat.id ? 'bg-[#316ac5] text-white font-semibold' : 'text-slate-800'
+                  }`
+                  : 'cursor-not-allowed text-slate-400'
               }`}
               onDoubleClick={() => {
-                setSelected(cat.id);
-                if (cat.id === 'product_setup') {
-                  onSelectCategory('product_setup');
+                if (cat.enabled) {
+                  setSelected(cat.id);
+                  if (cat.id === 'product_setup') {
+                    onSelectCategory('product_setup');
+                  }
                 }
               }}
             >
@@ -71,7 +76,8 @@ export default function DrugSetupModal({ isOpen, onClose, onSelectCategory }) {
                 name="drug_category"
                 checked={selected === cat.id}
                 onChange={() => setSelected(cat.id)}
-                className="cursor-pointer accent-[#0a246a]"
+                disabled={!cat.enabled}
+                className={cat.enabled ? 'cursor-pointer accent-[#0a246a]' : 'cursor-not-allowed accent-slate-300'}
               />
               <span className="leading-tight">{cat.label}</span>
             </label>

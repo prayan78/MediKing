@@ -20,17 +20,13 @@ import {
   Receipt,
   Sparkles,
 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 
 export default function MediProWorkspace({ onSwitchToModern, onSwitchToLauncher }) {
-  const { user, currentBranch, logout } = useAuth();
-  const navigate = useNavigate();
+  const { currentBranch } = useAuth();
 
   // Menu dropdown states
   const [activeMenu, setActiveMenu] = useState(null); // 'catalogue', 'purchase', 'sales', 'rep_inv', 'rep_acc', etc.
   const [purchaseSubmenuOpen, setPurchaseSubmenuOpen] = useState(false);
-  const [salesSubmenuOpen, setSalesSubmenuOpen] = useState(false);
-  const [accSubmenuOpen, setAccSubmenuOpen] = useState(false);
 
   // Modal open states
   const [drugSetupOpen, setDrugSetupOpen] = useState(false);
@@ -60,7 +56,6 @@ export default function MediProWorkspace({ onSwitchToModern, onSwitchToLauncher 
   const purchaseMenuRef = useRef(null);
   const salesMenuRef = useRef(null);
   const repInvMenuRef = useRef(null);
-  const repAccMenuRef = useRef(null);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -99,12 +94,9 @@ export default function MediProWorkspace({ onSwitchToModern, onSwitchToLauncher 
       const inPurchase = purchaseMenuRef.current && purchaseMenuRef.current.contains(e.target);
       const inSales = salesMenuRef.current && salesMenuRef.current.contains(e.target);
       const inRepInv = repInvMenuRef.current && repInvMenuRef.current.contains(e.target);
-      const inRepAcc = repAccMenuRef.current && repAccMenuRef.current.contains(e.target);
-      if (!inCatalogue && !inAppMenu && !inMedicine && !inPurchase && !inSales && !inRepInv && !inRepAcc) {
+      if (!inCatalogue && !inAppMenu && !inMedicine && !inPurchase && !inSales && !inRepInv) {
         setActiveMenu(null);
         setPurchaseSubmenuOpen(false);
-        setSalesSubmenuOpen(false);
-        setAccSubmenuOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -137,14 +129,6 @@ export default function MediProWorkspace({ onSwitchToModern, onSwitchToLauncher 
     setActiveMenu(null);
     if (action === 'drug_setup') {
       setDrugSetupOpen(true);
-    } else if (action === 'cash_party') {
-      alert('Cash Party & Ledger Setup');
-    } else if (action === 'icd_code_setup') {
-      alert('ICD-10 Diagnostic Codes Setup');
-    } else if (action === 'org_member_master') {
-      alert('Organization Member Master');
-    } else {
-      alert(`Selected: ${action.replace('_', ' ').toUpperCase()}`);
     }
   };
 
@@ -154,8 +138,8 @@ export default function MediProWorkspace({ onSwitchToModern, onSwitchToLauncher 
       setProductListOpen(true);
     } else if (catId === 'company_setup') {
       setCompanySetupOpen(true);
-    } else {
-      alert(`Opening ${catId.replace(/_/g, ' ').toUpperCase()}...`);
+    } else if (catId === 'generic_name_setup') {
+      setGenericMedicineOpen(true);
     }
   };
 
@@ -231,56 +215,25 @@ export default function MediProWorkspace({ onSwitchToModern, onSwitchToLauncher 
                     Goods Sales Billing
                   </button>
 
-                  {/* Issue Department with nested flyout submenu */}
-                  <div
-                    className="relative group/sub"
-                    onMouseEnter={() => setSalesSubmenuOpen(true)}
-                    onMouseLeave={() => setSalesSubmenuOpen(false)}
-                  >
-                    <div className="w-full px-3 py-1 hover:bg-[#316ac5] hover:text-white flex items-center justify-between cursor-pointer">
-                      <span>Issue Department</span>
-                      <span className="text-[9px]">▶</span>
-                    </div>
-
-                    {salesSubmenuOpen && (
-                      <div className="absolute left-full top-0 w-52 bg-white border border-slate-400 shadow-2xl py-0.5 z-60 text-slate-900 text-[11px] font-sans">
-                        <button
-                          onClick={() => { setActiveMenu(null); setSalesSubmenuOpen(false); alert('Department Issue Entry'); }}
-                          className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
-                        >
-                          Department Issue Entry
-                        </button>
-                        <button
-                          onClick={() => { setActiveMenu(null); setSalesSubmenuOpen(false); alert('Department Issue Return'); }}
-                          className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
-                        >
-                          Department Issue Return
-                        </button>
-                        <button
-                          onClick={() => { setActiveMenu(null); setSalesSubmenuOpen(false); alert('Department Issue Register'); }}
-                          className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
-                        >
-                          Department Issue Register
-                        </button>
-                      </div>
-                    )}
+                  <div className="flex cursor-not-allowed items-center justify-between px-3 py-1 text-slate-400">
+                    <span>Issue Department</span><span className="text-[9px]">▶</span>
                   </div>
 
                   <button
-                    onClick={() => { setActiveMenu(null); alert('Sales Reverse Entry'); }}
-                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                    disabled
+                    className="w-full cursor-not-allowed px-3 py-1 text-left text-slate-400"
                   >
                     Sales Reverse Entry
                   </button>
                   <button
-                    onClick={() => { setActiveMenu(null); alert('Print Invoice'); }}
-                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                    disabled
+                    className="w-full cursor-not-allowed px-3 py-1 text-left text-slate-400"
                   >
                     Print Invoice
                   </button>
                   <button
-                    onClick={() => { setActiveMenu(null); alert('Print Credit Note'); }}
-                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                    disabled
+                    className="w-full cursor-not-allowed px-3 py-1 text-left text-slate-400"
                   >
                     Print Credit Note
                   </button>
@@ -300,8 +253,8 @@ export default function MediProWorkspace({ onSwitchToModern, onSwitchToLauncher 
                     Sales Register
                   </button>
                   <button
-                    onClick={() => { setActiveMenu(null); alert('Organization Member Report'); }}
-                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                    disabled
+                    className="w-full cursor-not-allowed px-3 py-1 text-left text-slate-400"
                   >
                     Organization Member Report
                   </button>
@@ -318,20 +271,20 @@ export default function MediProWorkspace({ onSwitchToModern, onSwitchToLauncher 
                     Userwise Cash Summary
                   </button>
                   <button
-                    onClick={() => { setActiveMenu(null); alert('Companywise Sales'); }}
-                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                    disabled
+                    className="w-full cursor-not-allowed px-3 py-1 text-left text-slate-400"
                   >
                     Companywise Sales
                   </button>
                   <button
-                    onClick={() => { setActiveMenu(null); alert('Productwise Sales'); }}
-                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                    disabled
+                    className="w-full cursor-not-allowed px-3 py-1 text-left text-slate-400"
                   >
                     Productwise Sales
                   </button>
                   <button
-                    onClick={() => { setActiveMenu(null); alert('Invoicewise Profit/Loss'); }}
-                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                    disabled
+                    className="w-full cursor-not-allowed px-3 py-1 text-left text-slate-400"
                   >
                     Invoicewise Profit/Loss
                   </button>
@@ -339,38 +292,38 @@ export default function MediProWorkspace({ onSwitchToModern, onSwitchToLauncher 
                   <div className="border-t border-slate-200 my-0.5"></div>
 
                   <button
-                    onClick={() => { setActiveMenu(null); alert('IPD Requisition Book'); }}
-                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                    disabled
+                    className="w-full cursor-not-allowed px-3 py-1 text-left text-slate-400"
                   >
                     IPD Requisition Book
                   </button>
                   <button
-                    onClick={() => { setActiveMenu(null); alert('Cash To Teller'); }}
-                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                    disabled
+                    className="w-full cursor-not-allowed px-3 py-1 text-left text-slate-400"
                   >
                     Cash To Teller
                   </button>
                   <button
-                    onClick={() => { setActiveMenu(null); alert('Cash Hand Over'); }}
-                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                    disabled
+                    className="w-full cursor-not-allowed px-3 py-1 text-left text-slate-400"
                   >
                     Cash Hand Over
                   </button>
                   <button
-                    onClick={() => { setActiveMenu(null); alert('Army Report'); }}
-                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                    disabled
+                    className="w-full cursor-not-allowed px-3 py-1 text-left text-slate-400"
                   >
                     Army Report
                   </button>
                   <button
-                    onClick={() => { setActiveMenu(null); alert('IPD Requisition Print'); }}
-                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                    disabled
+                    className="w-full cursor-not-allowed px-3 py-1 text-left text-slate-400"
                   >
                     IPD Requisition Print
                   </button>
                   <button
-                    onClick={() => { setActiveMenu(null); alert('Requisition Form'); }}
-                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                    disabled
+                    className="w-full cursor-not-allowed px-3 py-1 text-left text-slate-400"
                   >
                     Requisition Form
                   </button>
@@ -378,26 +331,26 @@ export default function MediProWorkspace({ onSwitchToModern, onSwitchToLauncher 
                   <div className="border-t border-slate-200 my-0.5"></div>
 
                   <button
-                    onClick={() => { setActiveMenu(null); alert('Cash From Cashier'); }}
-                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                    disabled
+                    className="w-full cursor-not-allowed px-3 py-1 text-left text-slate-400"
                   >
                     Cash From Cashier
                   </button>
                   <button
-                    onClick={() => { setActiveMenu(null); alert('Cash From Teller'); }}
-                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                    disabled
+                    className="w-full cursor-not-allowed px-3 py-1 text-left text-slate-400"
                   >
                     Cash From Teller
                   </button>
                   <button
-                    onClick={() => { setActiveMenu(null); alert('Teller Report'); }}
-                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                    disabled
+                    className="w-full cursor-not-allowed px-3 py-1 text-left text-slate-400"
                   >
                     Teller Report
                   </button>
                   <button
-                    onClick={() => { setActiveMenu(null); alert('Cash Collection Report'); }}
-                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                    disabled
+                    className="w-full cursor-not-allowed px-3 py-1 text-left text-slate-400"
                   >
                     Cash Collection Report
                   </button>
@@ -421,20 +374,20 @@ export default function MediProWorkspace({ onSwitchToModern, onSwitchToLauncher 
               {activeMenu === 'purchase' && (
                 <div className="absolute left-0 mt-0.5 w-60 bg-white border border-slate-400 shadow-xl py-0.5 z-50 text-slate-900 text-[11px] font-sans">
                   <button
-                    onClick={() => { setActiveMenu(null); alert('Requisition Form'); }}
-                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                    disabled
+                    className="w-full cursor-not-allowed px-3 py-1 text-left text-slate-400"
                   >
                     Requisition Form
                   </button>
                   <button
-                    onClick={() => { setActiveMenu(null); alert('Purchase Order Approved'); }}
-                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                    disabled
+                    className="w-full cursor-not-allowed px-3 py-1 text-left text-slate-400"
                   >
                     Purchase Order Approved
                   </button>
                   <button
-                    onClick={() => { setActiveMenu(null); alert('Purchase Order Approved Edit'); }}
-                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                    disabled
+                    className="w-full cursor-not-allowed px-3 py-1 text-left text-slate-400"
                   >
                     Purchase Order Approved Edit
                   </button>
@@ -466,22 +419,14 @@ export default function MediProWorkspace({ onSwitchToModern, onSwitchToLauncher 
                           <span className="text-[9px] text-slate-400 font-mono">F7</span>
                         </button>
                         <button
-                          onClick={() => {
-                            setActiveMenu(null);
-                            setPurchaseSubmenuOpen(false);
-                            alert('Purchase Return');
-                          }}
-                          className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                          disabled
+                          className="w-full cursor-not-allowed px-3 py-1 text-left text-slate-400"
                         >
                           Purchase Return
                         </button>
                         <button
-                          onClick={() => {
-                            setActiveMenu(null);
-                            setPurchaseSubmenuOpen(false);
-                            alert('Purchase Return Shettled');
-                          }}
-                          className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                          disabled
+                          className="w-full cursor-not-allowed px-3 py-1 text-left text-slate-400"
                         >
                           Purchase Return Shettled
                         </button>
@@ -489,7 +434,7 @@ export default function MediProWorkspace({ onSwitchToModern, onSwitchToLauncher 
                     )}
                   </div>
 
-                  <div className="px-3 py-1 text-slate-400 flex items-center justify-between cursor-default">
+                  <div className="flex cursor-not-allowed items-center justify-between px-3 py-1 text-slate-400">
                     <span>Stock Adjustment Section</span>
                     <span className="text-[9px]">▶</span>
                   </div>
@@ -497,26 +442,26 @@ export default function MediProWorkspace({ onSwitchToModern, onSwitchToLauncher 
                   <div className="border-t border-slate-200 my-0.5"></div>
 
                   <button
-                    onClick={() => { setActiveMenu(null); alert('Modify Purchase'); }}
-                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                    disabled
+                    className="w-full cursor-not-allowed px-3 py-1 text-left text-slate-400"
                   >
                     Modify Purchase
                   </button>
                   <button
-                    onClick={() => { setActiveMenu(null); alert('Purchase Return Cancel'); }}
-                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                    disabled
+                    className="w-full cursor-not-allowed px-3 py-1 text-left text-slate-400"
                   >
                     Purchase Return Cancel
                   </button>
                   <button
-                    onClick={() => { setActiveMenu(null); alert('Purchase Expiry Return Shettle Cancel'); }}
-                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                    disabled
+                    className="w-full cursor-not-allowed px-3 py-1 text-left text-slate-400"
                   >
                     Purchase Expiry Return Shettle Cancel
                   </button>
                   <button
-                    onClick={() => { setActiveMenu(null); alert('Stock Adjustment Cancel'); }}
-                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                    disabled
+                    className="w-full cursor-not-allowed px-3 py-1 text-left text-slate-400"
                   >
                     Stock Adjustment Cancel
                   </button>
@@ -524,20 +469,20 @@ export default function MediProWorkspace({ onSwitchToModern, onSwitchToLauncher 
                   <div className="border-t border-slate-200 my-0.5"></div>
 
                   <button
-                    onClick={() => { setActiveMenu(null); alert('Print MRN'); }}
-                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                    disabled
+                    className="w-full cursor-not-allowed px-3 py-1 text-left text-slate-400"
                   >
                     Print MRN
                   </button>
                   <button
-                    onClick={() => { setActiveMenu(null); alert('Purchase Return Slip'); }}
-                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                    disabled
+                    className="w-full cursor-not-allowed px-3 py-1 text-left text-slate-400"
                   >
                     Purchase Return Slip
                   </button>
                   <button
-                    onClick={() => { setActiveMenu(null); alert('Stock Adjustment Slip'); }}
-                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                    disabled
+                    className="w-full cursor-not-allowed px-3 py-1 text-left text-slate-400"
                   >
                     Stock Adjustment Slip
                   </button>
@@ -571,16 +516,10 @@ export default function MediProWorkspace({ onSwitchToModern, onSwitchToLauncher 
               )}
             </div>
 
-            <button
-              onClick={() => setActiveMenu(activeMenu === 'inpatient' ? null : 'inpatient')}
-              className="px-2 py-0.5 hover:bg-[#316ac5] hover:text-white rounded-xs transition text-slate-900"
-            >
+            <button disabled className="cursor-not-allowed px-2 py-0.5 text-slate-400">
               In-Patient Section
             </button>
-            <button
-              onClick={() => setActiveMenu(activeMenu === 'account' ? null : 'account')}
-              className="px-2 py-0.5 hover:bg-[#316ac5] hover:text-white rounded-xs transition text-slate-900"
-            >
+            <button disabled className="cursor-not-allowed px-2 py-0.5 text-slate-400">
               Account-Department
             </button>
             {/* Reports-Inventory Menu with Dropdown (Image 2) */}
@@ -599,20 +538,20 @@ export default function MediProWorkspace({ onSwitchToModern, onSwitchToLauncher 
               {activeMenu === 'rep_inv' && (
                 <div className="absolute left-0 mt-0.5 w-52 bg-white border border-slate-400 shadow-xl py-0.5 z-50 text-slate-900 text-[11px] font-sans">
                   <button
-                    onClick={() => { setActiveMenu(null); alert('Stock/Sales Summary'); }}
-                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                    disabled
+                    className="w-full cursor-not-allowed px-3 py-1 text-left text-slate-400"
                   >
                     Stock/Sales Summary
                   </button>
                   <button
-                    onClick={() => { setActiveMenu(null); alert('Stock Register'); }}
-                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                    disabled
+                    className="w-full cursor-not-allowed px-3 py-1 text-left text-slate-400"
                   >
                     Stock Register
                   </button>
                   <button
-                    onClick={() => { setActiveMenu(null); alert('Partywise Stock Register'); }}
-                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                    disabled
+                    className="w-full cursor-not-allowed px-3 py-1 text-left text-slate-400"
                   >
                     Partywise Stock Register
                   </button>
@@ -626,32 +565,32 @@ export default function MediProWorkspace({ onSwitchToModern, onSwitchToLauncher 
                     <span>Stock Balance</span>
                   </button>
                   <button
-                    onClick={() => { setActiveMenu(null); alert('Stock Analysis'); }}
-                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                    disabled
+                    className="w-full cursor-not-allowed px-3 py-1 text-left text-slate-400"
                   >
                     Stock Analysis
                   </button>
                   <button
-                    onClick={() => { setActiveMenu(null); alert('Stock MIS'); }}
-                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                    disabled
+                    className="w-full cursor-not-allowed px-3 py-1 text-left text-slate-400"
                   >
                     Stock MIS
                   </button>
                   <button
-                    onClick={() => { setActiveMenu(null); alert('Maximum Sales'); }}
-                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                    disabled
+                    className="w-full cursor-not-allowed px-3 py-1 text-left text-slate-400"
                   >
                     Maximum Sales
                   </button>
                   <button
-                    onClick={() => { setActiveMenu(null); alert('Expiry Stock Register'); }}
-                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                    disabled
+                    className="w-full cursor-not-allowed px-3 py-1 text-left text-slate-400"
                   >
                     Expiry Stock Register
                   </button>
                   <button
-                    onClick={() => { setActiveMenu(null); alert('Expiry Stock Balance'); }}
-                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                    disabled
+                    className="w-full cursor-not-allowed px-3 py-1 text-left text-slate-400"
                   >
                     Expiry Stock Balance
                   </button>
@@ -659,78 +598,12 @@ export default function MediProWorkspace({ onSwitchToModern, onSwitchToLauncher 
               )}
             </div>
 
-            {/* Reports-Account Menu with Dropdown & Flyout Submenu (Image 1) */}
-            <div className="relative" ref={repAccMenuRef}>
-              <button
-                onClick={() => setActiveMenu(activeMenu === 'rep_acc' ? null : 'rep_acc')}
-                className={`px-2 py-0.5 rounded-xs transition font-semibold ${
-                  activeMenu === 'rep_acc'
-                    ? 'bg-[#316ac5] text-white'
-                    : 'hover:bg-[#316ac5] hover:text-white text-slate-900'
-                }`}
-              >
-                Reports-Account
-              </button>
-
-              {activeMenu === 'rep_acc' && (
-                <div className="absolute left-0 mt-0.5 w-48 bg-white border border-slate-400 shadow-xl py-0.5 z-50 text-slate-900 text-[11px] font-sans">
-                  {/* General Ledger with flyout submenu */}
-                  <div
-                    className="relative group/sub"
-                    onMouseEnter={() => setAccSubmenuOpen(true)}
-                    onMouseLeave={() => setAccSubmenuOpen(false)}
-                  >
-                    <div
-                      onClick={() => {
-                        setActiveMenu(null);
-                        setAccSubmenuOpen(false);
-                        alert('General Ledger');
-                      }}
-                      className="w-full px-3 py-1 hover:bg-[#316ac5] hover:text-white flex items-center justify-between cursor-pointer"
-                    >
-                      <span>General Ledger</span>
-                      <span className="text-[9px]">▶</span>
-                    </div>
-
-                    {accSubmenuOpen && (
-                      <div className="absolute left-full top-0 w-48 bg-white border border-slate-400 shadow-2xl py-0.5 z-60 text-slate-900 text-[11px] font-sans">
-                        <button
-                          onClick={() => { setActiveMenu(null); setAccSubmenuOpen(false); alert('General Ledger'); }}
-                          className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
-                        >
-                          General Ledger
-                        </button>
-                        <button
-                          onClick={() => { setActiveMenu(null); setAccSubmenuOpen(false); alert('Party Ledger'); }}
-                          className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
-                        >
-                          Party Ledger
-                        </button>
-                        <button
-                          onClick={() => { setActiveMenu(null); setAccSubmenuOpen(false); alert('Cash / Bank Book'); }}
-                          className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
-                        >
-                          Cash / Bank Book
-                        </button>
-                        <button
-                          onClick={() => { setActiveMenu(null); setAccSubmenuOpen(false); alert('Daily Transaction Report'); }}
-                          className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
-                        >
-                          Daily Transaction Report
-                        </button>
-                      </div>
-                    )}
-                  </div>
-
-                  <button
-                    onClick={() => { setActiveMenu(null); alert('Debtor Section'); }}
-                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
-                  >
-                    Debtor Section
-                  </button>
-                </div>
-              )}
-            </div>
+            <button
+              disabled
+              className="cursor-not-allowed px-2 py-0.5 font-semibold text-slate-400"
+            >
+              Reports-Account
+            </button>
 
             {/* Catalogue Menu with Dropdown (Image 2) */}
             <div className="relative" ref={catalogueMenuRef}>
@@ -755,39 +628,39 @@ export default function MediProWorkspace({ onSwitchToModern, onSwitchToLauncher 
                     <span className="text-[9px] text-slate-400 group-hover:text-white font-mono">F3</span>
                   </button>
                   <button
-                    onClick={() => handleCatalogueSelect('cash_party')}
-                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                    disabled
+                    className="w-full cursor-not-allowed px-3 py-1 text-left text-slate-400"
                   >
                     Cash Party
                   </button>
                   <button
-                    onClick={() => handleCatalogueSelect('icd_code_setup')}
-                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                    disabled
+                    className="w-full cursor-not-allowed px-3 py-1 text-left text-slate-400"
                   >
                     ICD Code Setup
                   </button>
                   <button
-                    onClick={() => handleCatalogueSelect('org_member_master')}
-                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                    disabled
+                    className="w-full cursor-not-allowed px-3 py-1 text-left text-slate-400"
                   >
                     Organization Member Master
                   </button>
                   <div className="border-t border-slate-200 my-0.5"></div>
                   <button
-                    onClick={() => handleCatalogueSelect('place_order')}
-                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                    disabled
+                    className="w-full cursor-not-allowed px-3 py-1 text-left text-slate-400"
                   >
                     Place Order
                   </button>
                   <button
-                    onClick={() => handleCatalogueSelect('fill_tender')}
-                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                    disabled
+                    className="w-full cursor-not-allowed px-3 py-1 text-left text-slate-400"
                   >
                     Fill Tender
                   </button>
                   <button
-                    onClick={() => handleCatalogueSelect('re_order')}
-                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                    disabled
+                    className="w-full cursor-not-allowed px-3 py-1 text-left text-slate-400"
                   >
                     Re-Order
                   </button>
@@ -821,18 +694,13 @@ export default function MediProWorkspace({ onSwitchToModern, onSwitchToLauncher 
               )}
             </div>
 
-            <button
-              onClick={() => setActiveMenu(activeMenu === 'maint' ? null : 'maint')}
-              className="px-2 py-0.5 hover:bg-[#316ac5] hover:text-white rounded-xs transition text-slate-900"
-            >
+            <button disabled className="cursor-not-allowed px-2 py-0.5 text-slate-400">
               Maintenance and Utility
             </button>
             <button
               onClick={() => {
-                if (window.confirm('Do you want to log out of MediKing?')) {
-                  logout();
-                  navigate('/login');
-                }
+                setActiveMenu(null);
+                onSwitchToLauncher?.();
               }}
               className="px-2 py-0.5 hover:bg-rose-600 hover:text-white rounded-xs transition text-rose-700 font-semibold"
             >

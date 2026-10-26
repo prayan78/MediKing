@@ -1,5 +1,6 @@
 import React from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const applications = [
   { id: 'account', label: 'Account', available: false },
@@ -9,15 +10,32 @@ const applications = [
 ];
 
 export default function ApplicationLauncher({ onSelect }) {
-  const { currentBranch, user } = useAuth();
+  const { currentBranch, user, logout } = useAuth();
+  const navigate = useNavigate();
   const branchTitle = currentBranch?.name?.toUpperCase() || 'NORVIC PHARMACIA P. LTD.';
+
+  const handleExit = () => {
+    if (window.confirm('Do you want to log out of MediKing?')) {
+      logout();
+      navigate('/login');
+    }
+  };
 
   return (
     <div className="flex h-screen w-full flex-col overflow-hidden bg-[#f0f2f5] font-sans">
       <header className="shrink-0 border-b border-slate-400 bg-[#ece9d8] text-[11px] text-slate-800">
         <div className="flex items-center justify-between border-b border-slate-300 px-2 py-1">
           <span className="font-semibold">{branchTitle}</span>
-          <span className="text-slate-500">MediPro</span>
+          <div className="flex items-center gap-3">
+            <span className="text-slate-500">MediPro</span>
+            <button
+              type="button"
+              onClick={handleExit}
+              className="rounded border border-rose-700 px-2 py-0.5 font-semibold text-rose-700 hover:bg-rose-700 hover:text-white"
+            >
+              Exit
+            </button>
+          </div>
         </div>
         <div className="px-2 py-1 font-semibold text-slate-700">{user?.name || 'User'}</div>
       </header>
