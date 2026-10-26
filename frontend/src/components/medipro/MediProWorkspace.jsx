@@ -11,6 +11,7 @@ import StockBalanceModal from './StockBalanceModal';
 import StockBalanceValuationModal from './StockBalanceValuationModal';
 import CashSalesModal from './CashSalesModal';
 import UserwiseCashSummaryModal from './UserwiseCashSummaryModal';
+import SalesReportModal from './SalesReportModal';
 import {
   Pill,
   ShoppingCart,
@@ -46,6 +47,7 @@ export default function MediProWorkspace({ onSwitchToModern }) {
   const [forInsurance, setForInsurance] = useState(false);
   const [forSSF, setForSSF] = useState(false);
   const [userwiseCashSummaryOpen, setUserwiseCashSummaryOpen] = useState(false);
+  const [salesReportOpen, setSalesReportOpen] = useState(false);
 
   // Live Clock & Dates
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -259,10 +261,16 @@ export default function MediProWorkspace({ onSwitchToModern }) {
                   <div className="border-t border-slate-200 my-0.5"></div>
 
                   <button
-                    onClick={() => { setActiveMenu(null); alert('Sales / Sales-Retrun Register'); }}
+                    onClick={() => { setActiveMenu(null); setSalesReportOpen(true); }}
                     className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
                   >
-                    Sales / Sales-Retrun Register
+                    Sales / Sales-Return Register
+                  </button>
+                  <button
+                    onClick={() => { setActiveMenu(null); setSalesReportOpen(true); }}
+                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                  >
+                    Sales Register
                   </button>
                   <button
                     onClick={() => { setActiveMenu(null); alert('Organization Member Report'); }}
@@ -1087,6 +1095,11 @@ export default function MediProWorkspace({ onSwitchToModern }) {
         onClose={() => setUserwiseCashSummaryOpen(false)}
         initialFromDate="2078/05/01"
         initialToDate={bsDate.formatted || '2078/05/14'}
+      />
+
+      <SalesReportModal
+        isOpen={salesReportOpen}
+        onClose={() => setSalesReportOpen(false)}
       />
     </div>
   );

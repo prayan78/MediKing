@@ -1,3 +1,10 @@
+npm run backend
+```
+**Frontend App (Port 5173):**
+```bash
+npm run frontend
+
+
 # MediKing — Hospital, Clinic, Laboratory & Pharmacy ERP Web Application
 
 **MediKing** is a modern medical and pharmacy management web platform inspired by the workflows of **MediPro**. It brings the high-efficiency, batch-aware, keyboard-friendly capabilities of medical ERPs to the web with an intuitive, clean interface.
