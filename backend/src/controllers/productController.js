@@ -220,7 +220,7 @@ exports.createProduct = async (req, res, next) => {
     }
 
     // Synchronize genericName field from generics array if given
-    if (body.generics && Array.isArray(body.generics) && body.generics.length > 0) {
+    if (Array.isArray(body.generics)) {
       body.genericName = body.generics.map((g) => g.genericName).join(', ');
     }
 
@@ -249,7 +249,7 @@ exports.updateProduct = async (req, res, next) => {
     const body = { ...req.body };
 
     // Synchronize genericName from generics array if given
-    if (body.generics && Array.isArray(body.generics) && body.generics.length > 0) {
+    if (Array.isArray(body.generics)) {
       body.genericName = body.generics.map((g) => g.genericName).join(', ');
     }
 

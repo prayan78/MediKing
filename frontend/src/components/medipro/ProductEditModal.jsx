@@ -12,8 +12,8 @@ export default function ProductEditModal({ isOpen, onClose, product, onSaved }) 
     brandName: '',
     companyCode: 228,
     companyName: 'PHARMA DIVISION OF ASIAN PHARMACEUTIC.',
-    genericName: 'PANTOPRAZOLE-40MG',
-    generics: [{ genId: 1718, genericName: 'PANTOPRAZOLE-40MG' }],
+    genericName: '',
+    generics: [],
     isInsuranceProduct: false,
     vat: 'N',
     vatPercent: 0,
@@ -64,13 +64,19 @@ export default function ProductEditModal({ isOpen, onClose, product, onSaved }) 
     doseUnit: '',
   });
 
-  const [newGenId, setNewGenId] = useState('');
   const [newGenName, setNewGenName] = useState('');
+  const [genericOptions, setGenericOptions] = useState([]);
+  const [genericLoading, setGenericLoading] = useState(false);
+  const [genericError, setGenericError] = useState('');
+  const [savingGenericName, setSavingGenericName] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [showAddGenRow, setShowAddGenRow] = useState(false);
 
   useEffect(() => {
+    setNewGenName('');
+    setShowAddGenRow(false);
+    setGenericError('');
     if (product) {
       setFormData({
         mdCode: product.mdCode || '',
@@ -81,7 +87,11 @@ export default function ProductEditModal({ isOpen, onClose, product, onSaved }) 
         generics:
           product.generics && product.generics.length > 0
             ? product.generics
-            : [{ genId: 1001, genericName: product.genericName || product.brandName }],
+            : (product.genericName || '')
+              .split(',')
+              .map((genericName) => genericName.trim())
+              .filter(Boolean)
+              .map((genericName) => ({ genId: 0, genericName })),
         isInsuranceProduct: Boolean(product.isInsuranceProduct),
         vat: product.vat || 'N',
         vatPercent: product.vatPercent || 0,
@@ -136,7 +146,7 @@ export default function ProductEditModal({ isOpen, onClose, product, onSaved }) 
         companyCode: 228,
         companyName: 'PHARMA DIVISION OF ASIAN PHARMACEUTIC.',
         genericName: '',
-        generics: [{ genId: 1001, genericName: '' }],
+        generics: [],
         isInsuranceProduct: false,
         vat: 'N',
         vatPercent: 0,
@@ -186,6 +196,30 @@ export default function ProductEditModal({ isOpen, onClose, product, onSaved }) 
     }
   }, [product, isOpen]);
 
+  useEffect(() => {
+    if (!isOpen) return undefined;
+    let cancelled = false;
+
+    const loadGenericNames = async () => {
+      setGenericLoading(true);
+      setGenericError('');
+      try {
+        const response = await api.get('/products/generic-medicines');
+        if (!cancelled) setGenericOptions(response.data.data || []);
+      } catch (loadError) {
+        console.error('Failed to load generic names:', loadError);
+        if (!cancelled) setGenericError('Failed to load generic names.');
+      } finally {
+        if (!cancelled) setGenericLoading(false);
+      }
+    };
+
+    loadGenericNames();
+    return () => {
+      cancelled = true;
+    };
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   const handleChange = (e) => {
@@ -219,18 +253,90 @@ export default function ProductEditModal({ isOpen, onClose, product, onSaved }) 
     });
   };
 
-  const handleAddGeneric = () => {
-    if (!newGenName) return;
-    const nextId = newGenId ? Number(newGenId) : 1000 + formData.generics.length + 1;
-    const updated = [...formData.generics, { genId: nextId, genericName: newGenName.toUpperCase() }];
+  const getGenericId = (genericName) => {
+    const existingId = genericOptions
+      .flatMap((group) => group.brands.flatMap((brand) => brand.generics || []))
+      .find((generic) => generic.genericName.toLocaleUpperCase() === genericName.toLocaleUpperCase())
+      ?.genId;
+    if (existingId) return existingId;
+
+    const usedIds = [
+      ...formData.generics.map((generic) => Number(generic.genId) || 0),
+      ...genericOptions.flatMap((group) => group.brands.flatMap((brand) =>
+        (brand.generics || []).map((generic) => Number(generic.genId) || 0)
+      )),
+    ];
+    return Math.max(0, ...usedIds) + 1;
+  };
+
+  const handleSelectGeneric = (genericName) => {
+    const normalizedName = genericName.trim().replace(/\s+/g, ' ');
+    if (!normalizedName || formData.generics.some(
+      (generic) => generic.genericName.toLocaleUpperCase() === normalizedName.toLocaleUpperCase()
+    )) {
+      setNewGenName('');
+      setShowAddGenRow(false);
+      return;
+    }
+
+    const updated = [...formData.generics, {
+      genId: getGenericId(normalizedName),
+      genericName: normalizedName,
+    }];
     setFormData((prev) => ({
       ...prev,
       generics: updated,
       genericName: updated.map((g) => g.genericName).join(', '),
     }));
-    setNewGenId('');
     setNewGenName('');
     setShowAddGenRow(false);
+    setGenericError('');
+  };
+
+  const handleAddGeneric = async () => {
+    const genericName = newGenName.trim().replace(/\s+/g, ' ');
+    if (!genericName) return;
+
+    const existing = genericOptions.find(
+      (group) => group.genericName.toLocaleUpperCase() === genericName.toLocaleUpperCase()
+    );
+    if (existing) {
+      handleSelectGeneric(existing.genericName);
+      return;
+    }
+
+    setSavingGenericName(true);
+    setGenericError('');
+    try {
+      const response = await api.post('/products/generic-medicines', { genericName });
+      const addedGeneric = response.data.data;
+      setGenericOptions((previous) => [...previous, addedGeneric]
+        .sort((left, right) => left.genericName.localeCompare(right.genericName)));
+      handleSelectGeneric(addedGeneric.genericName);
+    } catch (saveError) {
+      console.error('Failed to add generic name:', saveError);
+      if (saveError.response?.status === 409) {
+        try {
+          const response = await api.get('/products/generic-medicines');
+          const refreshedOptions = response.data.data || [];
+          setGenericOptions(refreshedOptions);
+          const existingGeneric = refreshedOptions.find(
+            (group) => group.genericName.toLocaleUpperCase() === genericName.toLocaleUpperCase()
+          );
+          if (existingGeneric) {
+            handleSelectGeneric(existingGeneric.genericName);
+            return;
+          }
+        } catch (reloadError) {
+          console.error('Failed to refresh generic names:', reloadError);
+          setGenericError('The generic name already exists, but the list could not be refreshed.');
+          return;
+        }
+      }
+      setGenericError(saveError.response?.data?.message || 'Failed to add generic name.');
+    } finally {
+      setSavingGenericName(false);
+    }
   };
 
   const handleDeleteGeneric = (index) => {
@@ -241,6 +347,14 @@ export default function ProductEditModal({ isOpen, onClose, product, onSaved }) 
       genericName: updated.map((g) => g.genericName).join(', '),
     }));
   };
+
+  const genericQuery = newGenName.trim().toLocaleLowerCase();
+  const filteredGenericOptions = genericOptions.filter((group) => (
+    !genericQuery || group.genericName.toLocaleLowerCase().includes(genericQuery)
+  ));
+  const exactGenericMatch = genericOptions.some(
+    (group) => group.genericName.toLocaleUpperCase() === newGenName.trim().replace(/\s+/g, ' ').toLocaleUpperCase()
+  );
 
   const handleSave = async (e) => {
     e.preventDefault();
@@ -279,7 +393,7 @@ export default function ProductEditModal({ isOpen, onClose, product, onSaved }) 
         {/* Title Bar */}
         <div className="bg-gradient-to-r from-[#0a246a] to-[#a6caf0] text-white px-2 py-1 flex items-center justify-between font-bold select-none">
           <span className="text-[11px] tracking-wide">
-            Product Setup <span className="font-normal text-[10px] ml-2 text-yellow-200">(F6 For Add Generic)</span>
+            Product Setup <span className="font-normal text-[10px] ml-2 text-yellow-200">(Search or Add Generic)</span>
           </span>
           <div className="flex items-center gap-1">
             <button
@@ -419,33 +533,54 @@ export default function ProductEditModal({ isOpen, onClose, product, onSaved }) 
                       ))}
                       {showAddGenRow && (
                         <tr className="bg-yellow-50">
-                          <td className="px-1 py-0.5 border-r border-slate-200">
-                            <input
-                              type="number"
-                              value={newGenId}
-                              onChange={(e) => setNewGenId(e.target.value)}
-                              placeholder="ID"
-                              className="w-full px-1 border border-slate-300 bg-white text-xs"
-                            />
-                          </td>
-                          <td className="px-1 py-0.5">
+                          <td colSpan={3} className="p-1">
                             <input
                               type="text"
                               value={newGenName}
                               onChange={(e) => setNewGenName(e.target.value)}
-                              placeholder="Type Generic Name..."
-                              className="w-full px-1 border border-slate-300 bg-white text-xs uppercase"
+                              onKeyDown={(event) => {
+                                if (event.key === 'Enter') {
+                                  event.preventDefault();
+                                  if (filteredGenericOptions.length === 1) {
+                                    handleSelectGeneric(filteredGenericOptions[0].genericName);
+                                  } else if (!exactGenericMatch && newGenName.trim()) {
+                                    handleAddGeneric();
+                                  }
+                                }
+                              }}
+                              placeholder="Search generic names..."
+                              className="w-full px-1.5 py-1 border border-slate-300 bg-white text-xs"
                               autoFocus
                             />
-                          </td>
-                          <td className="px-1 py-0.5 text-center">
-                            <button
-                              type="button"
-                              onClick={handleAddGeneric}
-                              className="px-1.5 bg-emerald-600 text-white rounded-xs text-[10px]"
-                            >
-                              OK
-                            </button>
+                            <div className="mt-1 max-h-28 overflow-y-auto border border-slate-300 bg-white">
+                              {genericLoading ? (
+                                <p className="px-2 py-1 text-slate-500">Loading generic names...</p>
+                              ) : filteredGenericOptions.length ? (
+                                filteredGenericOptions.slice(0, 30).map((group) => (
+                                  <button
+                                    key={group.genericName}
+                                    type="button"
+                                    onClick={() => handleSelectGeneric(group.genericName)}
+                                    className="block w-full px-2 py-1 text-left hover:bg-blue-100"
+                                  >
+                                    {group.genericName}
+                                  </button>
+                                ))
+                              ) : (
+                                <p className="px-2 py-1 text-slate-500">No matching generic names.</p>
+                              )}
+                            </div>
+                            {genericError && <p role="alert" className="mt-1 text-rose-700">{genericError}</p>}
+                            {newGenName.trim() && !exactGenericMatch && (
+                              <button
+                                type="button"
+                                onClick={handleAddGeneric}
+                                disabled={savingGenericName}
+                                className="mt-1 px-2 py-0.5 bg-emerald-600 text-white rounded-xs text-[10px] disabled:opacity-50"
+                              >
+                                {savingGenericName ? 'Adding...' : `Add "${newGenName.trim()}" as a new generic`}
+                              </button>
+                            )}
                           </td>
                         </tr>
                       )}
@@ -454,7 +589,7 @@ export default function ProductEditModal({ isOpen, onClose, product, onSaved }) 
                 </div>
 
                 <div className="flex items-center justify-between text-[10px] text-slate-500 mt-0.5 px-0.5">
-                  <span>-F6 for add Generic -Press Delete key for Delete Generic</span>
+                  <span>Select an existing generic name or add a new one.</span>
                   <button
                     type="button"
                     onClick={() => setShowAddGenRow(!showAddGenRow)}
