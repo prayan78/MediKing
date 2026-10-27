@@ -23,6 +23,12 @@ export default function PurchaseBookModal({
     }
   }, [isOpen]);
 
+  const closeModal = () => {
+    setSearch('');
+    setSelectedIndex(0);
+    onClose();
+  };
+
   const fetchPurchases = async () => {
     setLoading(true);
     try {
@@ -64,7 +70,7 @@ export default function PurchaseBookModal({
             <span>Purchase Book</span>
           </div>
           <button
-            onClick={onClose}
+            onClick={closeModal}
             className="w-4 h-4 bg-[#ece9d8] text-slate-900 hover:bg-rose-600 hover:text-white flex items-center justify-center font-bold text-xs rounded-xs border border-slate-600 shadow-xs"
           >
             ×
@@ -81,7 +87,7 @@ export default function PurchaseBookModal({
               Report
             </button>
             <button
-              onClick={onClose}
+              onClick={closeModal}
               className="underline cursor-pointer hover:bg-blue-100 px-1 font-semibold"
             >
               Exit
@@ -287,7 +293,7 @@ export default function PurchaseBookModal({
               </span>
             </div>
             <button
-              onClick={onClose}
+              onClick={closeModal}
               className="px-4 py-0.5 bg-gradient-to-b from-[#f9f9f9] to-[#dcdcdc] hover:from-white hover:to-[#cecece] border border-slate-500 font-bold text-slate-800 rounded-xs shadow-xs text-xs"
             >
               Close
@@ -298,4 +304,3 @@ export default function PurchaseBookModal({
     </div>
   );
 }
-

@@ -40,7 +40,14 @@ export default function GenericMedicineModal({ isOpen, onClose }) {
 
   const filteredGenerics = useMemo(() => {
     const query = search.trim().toLocaleLowerCase();
-    return genericGroups.filter((group) => !query || group.genericName.toLocaleLowerCase().includes(query));
+    return genericGroups.filter((group) => (
+      !query
+      || group.genericName.toLocaleLowerCase().includes(query)
+      || group.brands.some((brand) => (
+        brand.brandName?.toLocaleLowerCase().includes(query)
+        || String(brand.mdCode ?? '').includes(query)
+      ))
+    ));
   }, [genericGroups, search]);
 
   if (!isOpen) return null;

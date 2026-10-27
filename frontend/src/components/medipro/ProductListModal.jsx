@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   ChevronFirst,
   ChevronLeft,
@@ -22,42 +22,61 @@ export default function ProductListModal({ isOpen, onClose }) {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const searchRequestRef = useRef(0);
 
   // Edit / Add modal state
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [productToEdit, setProductToEdit] = useState(null);
 
-  const fetchProducts = async () => {
+  const fetchProducts = async (searchTerm = search, filterStatus = statusFilter) => {
+    const requestId = ++searchRequestRef.current;
     setLoading(true);
     try {
       const params = {};
-      if (search.trim()) params.search = search.trim();
-      if (statusFilter !== 'All') params.status = statusFilter;
+      if (searchTerm.trim()) params.search = searchTerm.trim();
+      if (filterStatus !== 'All') params.status = filterStatus;
 
       const res = await api.get('/products', { params });
       const list = res.data.data || [];
+      if (requestId !== searchRequestRef.current) return;
       setProducts(list);
-      if (list.length > 0) {
-        setSelectedIndex(0);
-      }
+      setSelectedIndex(0);
     } catch (err) {
-      console.error('Error fetching products:', err);
+      if (requestId === searchRequestRef.current) {
+        console.error('Error fetching products:', err);
+      }
     } finally {
-      setLoading(false);
+      if (requestId === searchRequestRef.current) setLoading(false);
     }
   };
 
   useEffect(() => {
-    if (isOpen) {
-      fetchProducts();
+    if (!isOpen) {
+      searchRequestRef.current += 1;
+      return undefined;
     }
-  }, [isOpen, statusFilter]);
+
+    const timeout = setTimeout(() => {
+      fetchProducts(search, statusFilter);
+    }, search.trim() ? 200 : 0);
+
+    return () => {
+      clearTimeout(timeout);
+      searchRequestRef.current += 1;
+    };
+  }, [isOpen, search, statusFilter]);
 
   if (!isOpen) return null;
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     fetchProducts();
+  };
+
+  const closeModal = () => {
+    setSearch('');
+    setSelectedIndex(0);
+    onClose();
   };
 
   const selectedProduct = products[selectedIndex] || null;
@@ -109,7 +128,7 @@ export default function ProductListModal({ isOpen, onClose }) {
               Product <span className="font-normal text-[10px] ml-2 text-yellow-200">(F6 For Multiple Generic Add)</span>
             </span>
             <button
-              onClick={onClose}
+              onClick={closeModal}
               className="w-4 h-4 bg-[#ece9d8] text-slate-900 hover:bg-rose-600 hover:text-white flex items-center justify-center font-bold text-xs rounded-xs border border-slate-600 shadow-xs"
             >
               ×
@@ -120,7 +139,7 @@ export default function ProductListModal({ isOpen, onClose }) {
           <div className="bg-[#f0f0f0] border-b border-slate-300 px-2 py-0.5 text-[11px] text-slate-700 flex items-center justify-between shrink-0">
             <div className="flex items-center gap-4">
               <span className="underline cursor-pointer hover:bg-blue-100 px-1">Report</span>
-              <span onClick={onClose} className="underline cursor-pointer hover:bg-blue-100 px-1">Exit</span>
+              <span onClick={closeModal} className="underline cursor-pointer hover:bg-blue-100 px-1">Exit</span>
             </div>
             <span className="text-[10px] text-slate-600 font-mono">
               Total Records: <strong>{products.length}</strong>
@@ -301,7 +320,7 @@ export default function ProductListModal({ isOpen, onClose }) {
             <div className="flex items-center gap-2">
               <button
                 type="button"
-                onClick={fetchProducts}
+                onClick={() => fetchProducts()}
                 className="px-6 py-1 bg-[#ece9d8] hover:bg-[#dfdbcd] border border-slate-600 shadow-xs text-xs font-bold text-slate-900 active:translate-y-0.5 transition"
               >
                 List
@@ -329,7 +348,7 @@ export default function ProductListModal({ isOpen, onClose }) {
               </button>
               <button
                 type="button"
-                onClick={onClose}
+                onClick={closeModal}
                 className="px-6 py-1 bg-[#ece9d8] hover:bg-[#dfdbcd] border border-slate-600 shadow-xs text-xs font-bold text-slate-900 active:translate-y-0.5 transition"
               >
                 Close
@@ -346,7 +365,7 @@ export default function ProductListModal({ isOpen, onClose }) {
               </button>
               <button
                 type="button"
-                onClick={onClose}
+                onClick={closeModal}
                 className="px-8 py-1 bg-[#ece9d8] hover:bg-[#dfdbcd] border border-slate-600 shadow-xs text-xs font-bold text-slate-900 active:translate-y-0.5 transition"
               >
                 Close

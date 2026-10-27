@@ -32,6 +32,13 @@ export default function CompanySetupModal({ isOpen, onClose, onSelectCompany }) 
     }
   }, [isOpen]);
 
+  const closeModal = () => {
+    setSearch('');
+    setSelectedIndex(0);
+    setShowNewCompany(false);
+    onClose();
+  };
+
   const fetchCompanies = async () => {
     setLoading(true);
     try {
@@ -83,7 +90,7 @@ export default function CompanySetupModal({ isOpen, onClose, onSelectCompany }) 
       if (showNewCompany) {
         setShowNewCompany(false);
       } else {
-        onClose();
+        closeModal();
       }
     }
   };
@@ -92,7 +99,7 @@ export default function CompanySetupModal({ isOpen, onClose, onSelectCompany }) 
     if (onSelectCompany) {
       onSelectCompany(company);
     }
-    onClose();
+    closeModal();
   };
 
   const handleCreateCompany = async (e) => {
@@ -125,7 +132,7 @@ export default function CompanySetupModal({ isOpen, onClose, onSelectCompany }) 
             <span>Select Company</span>
           </div>
           <button
-            onClick={onClose}
+            onClick={closeModal}
             className="w-4 h-4 bg-[#ece9d8] text-slate-900 hover:bg-rose-600 hover:text-white flex items-center justify-center font-bold text-xs rounded-xs border border-slate-600 shadow-xs"
           >
             ×
@@ -141,7 +148,7 @@ export default function CompanySetupModal({ isOpen, onClose, onSelectCompany }) 
             >
               Function
             </span>
-            <span onClick={onClose} className="underline cursor-pointer hover:bg-blue-100 px-1">
+            <span onClick={closeModal} className="underline cursor-pointer hover:bg-blue-100 px-1">
               Exit
             </span>
           </div>
@@ -253,7 +260,7 @@ export default function CompanySetupModal({ isOpen, onClose, onSelectCompany }) 
               Select (Enter)
             </button>
             <button
-              onClick={onClose}
+              onClick={closeModal}
               className="px-3 py-0.5 bg-gradient-to-b from-[#f9f9f9] to-[#dcdcdc] hover:from-white hover:to-[#cecece] border border-slate-500 font-bold text-slate-800 text-[11px] rounded-xs shadow-xs"
             >
               Close (Esc)
@@ -351,4 +358,3 @@ export default function CompanySetupModal({ isOpen, onClose, onSelectCompany }) 
     </div>
   );
 }
-
