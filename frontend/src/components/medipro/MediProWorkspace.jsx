@@ -13,6 +13,8 @@ import CashSalesModal from './CashSalesModal';
 import UserwiseCashSummaryModal from './UserwiseCashSummaryModal';
 import SalesReportModal from './SalesReportModal';
 import GenericMedicineModal from './GenericMedicineModal';
+import JournalVoucherModal from './JournalVoucherModal';
+import StatementModal from './StatementModal';
 import {
   Pill,
   ShoppingCart,
@@ -27,6 +29,7 @@ export default function MediProWorkspace({ onSwitchToModern, onSwitchToLauncher 
   // Menu dropdown states
   const [activeMenu, setActiveMenu] = useState(null); // 'catalogue', 'purchase', 'sales', 'rep_inv', 'rep_acc', etc.
   const [purchaseSubmenuOpen, setPurchaseSubmenuOpen] = useState(false);
+  const [accountVoucherSubmenuOpen, setAccountVoucherSubmenuOpen] = useState(false);
 
   // Modal open states
   const [drugSetupOpen, setDrugSetupOpen] = useState(false);
@@ -46,6 +49,8 @@ export default function MediProWorkspace({ onSwitchToModern, onSwitchToLauncher 
   const [userwiseCashSummaryOpen, setUserwiseCashSummaryOpen] = useState(false);
   const [salesReportOpen, setSalesReportOpen] = useState(false);
   const [genericMedicineOpen, setGenericMedicineOpen] = useState(false);
+  const [journalVoucherOpen, setJournalVoucherOpen] = useState(false);
+  const [statementOpen, setStatementOpen] = useState(false);
 
   // Live Clock & Dates
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -56,6 +61,8 @@ export default function MediProWorkspace({ onSwitchToModern, onSwitchToLauncher 
   const purchaseMenuRef = useRef(null);
   const salesMenuRef = useRef(null);
   const repInvMenuRef = useRef(null);
+  const accountMenuRef = useRef(null);
+  const repAccMenuRef = useRef(null);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -94,9 +101,12 @@ export default function MediProWorkspace({ onSwitchToModern, onSwitchToLauncher 
       const inPurchase = purchaseMenuRef.current && purchaseMenuRef.current.contains(e.target);
       const inSales = salesMenuRef.current && salesMenuRef.current.contains(e.target);
       const inRepInv = repInvMenuRef.current && repInvMenuRef.current.contains(e.target);
-      if (!inCatalogue && !inAppMenu && !inMedicine && !inPurchase && !inSales && !inRepInv) {
+      const inAccount = accountMenuRef.current && accountMenuRef.current.contains(e.target);
+      const inRepAcc = repAccMenuRef.current && repAccMenuRef.current.contains(e.target);
+      if (!inCatalogue && !inAppMenu && !inMedicine && !inPurchase && !inSales && !inRepInv && !inAccount && !inRepAcc) {
         setActiveMenu(null);
         setPurchaseSubmenuOpen(false);
+        setAccountVoucherSubmenuOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -519,9 +529,55 @@ export default function MediProWorkspace({ onSwitchToModern, onSwitchToLauncher 
             <button disabled className="cursor-not-allowed px-2 py-0.5 text-slate-400">
               In-Patient Section
             </button>
-            <button disabled className="cursor-not-allowed px-2 py-0.5 text-slate-400">
-              Account-Department
-            </button>
+            <div className="relative" ref={accountMenuRef}>
+              <button
+                onClick={() => {
+                  setActiveMenu(activeMenu === 'account' ? null : 'account');
+                  setAccountVoucherSubmenuOpen(false);
+                }}
+                className={`px-2 py-0.5 rounded-xs transition font-semibold ${
+                  activeMenu === 'account' ? 'bg-[#316ac5] text-white' : 'hover:bg-[#316ac5] hover:text-white text-slate-900'
+                }`}
+              >
+                Account-Department
+              </button>
+              {activeMenu === 'account' && (
+                <div className="absolute left-0 mt-0.5 w-56 border border-slate-400 bg-white py-0.5 text-[11px] text-slate-900 shadow-xl">
+                  <div
+                    className="relative"
+                    onMouseEnter={() => setAccountVoucherSubmenuOpen(true)}
+                    onMouseLeave={() => setAccountVoucherSubmenuOpen(false)}
+                  >
+                    <button
+                      onClick={() => setAccountVoucherSubmenuOpen((open) => !open)}
+                      className="flex w-full items-center justify-between bg-[#316ac5] px-3 py-1 text-left font-semibold text-white"
+                    >
+                      <span>Voucher Entry Section</span><span>›</span>
+                    </button>
+                    {accountVoucherSubmenuOpen && (
+                      <div className="absolute left-full top-0 z-[55] w-64 border border-slate-400 bg-white py-0.5 text-slate-900 shadow-xl">
+                        <button
+                          onClick={() => {
+                            setActiveMenu(null);
+                            setAccountVoucherSubmenuOpen(false);
+                            setJournalVoucherOpen(true);
+                          }}
+                          className="w-full px-3 py-1.5 text-left font-semibold text-blue-900 hover:bg-[#316ac5] hover:text-white"
+                        >
+                          Journal Voucher Entry
+                        </button>
+                        {['Expense/Purchase Voucher Entry', 'TDS Voucher Entry', 'Payment Voucher', 'Receipt Voucher'].map((label) => (
+                          <button key={label} disabled className="w-full cursor-not-allowed px-3 py-1.5 text-left text-slate-400">
+                            {label}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  <button disabled className="w-full cursor-not-allowed px-3 py-1 text-left text-slate-400">Voucher Report Section</button>
+                </div>
+              )}
+            </div>
             {/* Reports-Inventory Menu with Dropdown (Image 2) */}
             <div className="relative" ref={repInvMenuRef}>
               <button
@@ -598,12 +654,36 @@ export default function MediProWorkspace({ onSwitchToModern, onSwitchToLauncher 
               )}
             </div>
 
-            <button
-              disabled
-              className="cursor-not-allowed px-2 py-0.5 font-semibold text-slate-400"
-            >
-              Reports-Account
-            </button>
+            <div className="relative" ref={repAccMenuRef}>
+              <button
+                onClick={() => setActiveMenu(activeMenu === 'rep_acc' ? null : 'rep_acc')}
+                className={`px-2 py-0.5 rounded-xs transition font-semibold ${
+                  activeMenu === 'rep_acc' ? 'bg-[#316ac5] text-white' : 'hover:bg-[#316ac5] hover:text-white text-slate-900'
+                }`}
+              >
+                Reports-Account
+              </button>
+              {activeMenu === 'rep_acc' && (
+                <div className="absolute left-0 mt-0.5 w-52 border border-slate-400 bg-white py-0.5 text-[11px] text-slate-900 shadow-xl">
+                  {['Quick Balance', 'Statement', 'Supplier Section', 'Trial Balance', 'Final Account', 'Aging', 'Aging All', 'Final Report'].map((label) => (
+                    label === 'Statement' ? (
+                      <button
+                        key={label}
+                        onClick={() => {
+                          setActiveMenu(null);
+                          setStatementOpen(true);
+                        }}
+                        className="w-full px-3 py-1.5 text-left font-semibold text-blue-900 hover:bg-[#316ac5] hover:text-white"
+                      >
+                        {label}
+                      </button>
+                    ) : (
+                      <button key={label} disabled className="w-full cursor-not-allowed px-3 py-1.5 text-left text-slate-400">{label}</button>
+                    )
+                  ))}
+                </div>
+              )}
+            </div>
 
             {/* Catalogue Menu with Dropdown (Image 2) */}
             <div className="relative" ref={catalogueMenuRef}>
@@ -1026,6 +1106,16 @@ export default function MediProWorkspace({ onSwitchToModern, onSwitchToLauncher 
       <GenericMedicineModal
         isOpen={genericMedicineOpen}
         onClose={() => setGenericMedicineOpen(false)}
+      />
+
+      <JournalVoucherModal
+        isOpen={journalVoucherOpen}
+        onClose={() => setJournalVoucherOpen(false)}
+      />
+
+      <StatementModal
+        isOpen={statementOpen}
+        onClose={() => setStatementOpen(false)}
       />
     </div>
   );

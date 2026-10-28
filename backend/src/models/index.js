@@ -14,6 +14,7 @@ const SystemSetting = require('./SystemSetting');
 const Company = require('./Company');
 const PurchaseEntry = require('./PurchaseEntry');
 const WeeklyRoster = require('./WeeklyRoster');
+const JournalVoucher = require('./JournalVoucher');
 
 module.exports = {
   User,
@@ -32,4 +33,5 @@ module.exports = {
   Company,
   PurchaseEntry,
   WeeklyRoster,
+  JournalVoucher,
 };

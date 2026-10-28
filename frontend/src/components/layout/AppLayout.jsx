@@ -35,7 +35,7 @@ export default function AppLayout() {
   };
 
   // Full screen MediPro Desktop UI without letterbox empty space
-  if (viewMode === 'medipro' || viewMode === 'attendance' || viewMode === 'launcher') {
+  if (viewMode === 'medipro' || viewMode === 'attendance' || viewMode === 'launcher' || viewMode === 'account') {
     return (
       <div className="h-screen w-screen overflow-hidden bg-[#ece9d8]">
         <Outlet

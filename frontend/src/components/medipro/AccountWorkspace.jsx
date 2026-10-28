@@ -1,0 +1,161 @@
+import React, { useEffect, useRef, useState } from 'react';
+import { useAuth } from '../../context/AuthContext';
+import JournalVoucherModal from './JournalVoucherModal';
+import StatementModal from './StatementModal';
+
+export default function AccountWorkspace({ onBackToLauncher }) {
+  const { currentBranch, user } = useAuth();
+  const [activeMenu, setActiveMenu] = useState(null);
+  const [voucherEntryOpen, setVoucherEntryOpen] = useState(false);
+  const [statementOpen, setStatementOpen] = useState(false);
+  const [currentTime, setCurrentTime] = useState(() => new Date());
+  const accountMenuRef = useRef(null);
+  const reportsMenuRef = useRef(null);
+  const appMenuRef = useRef(null);
+
+  useEffect(() => {
+    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      const inAccount = accountMenuRef.current?.contains(event.target);
+      const inReports = reportsMenuRef.current?.contains(event.target);
+      const inApp = appMenuRef.current?.contains(event.target);
+      if (!inAccount && !inReports && !inApp) setActiveMenu(null);
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const branchTitle = currentBranch?.name?.toUpperCase() || 'MEDIKING CENTRAL HOSPITAL (KATHMANDU)';
+  const formattedDate = currentTime.toLocaleDateString('en-US', {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+  });
+  const formattedTime = currentTime.toLocaleTimeString('en-US', {
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+  });
+
+  const openJournalVoucher = () => {
+    setActiveMenu(null);
+    setVoucherEntryOpen(true);
+  };
+  const openStatement = () => {
+    setActiveMenu(null);
+    setStatementOpen(true);
+  };
+  const menuClass = (name) => `rounded-xs px-2 py-1 font-semibold transition ${
+    activeMenu === name
+      ? 'bg-[#316ac5] text-white'
+      : 'text-slate-900 hover:bg-[#316ac5] hover:text-white'
+  }`;
+  const dropdownClass = 'absolute left-0 z-50 mt-0.5 min-w-56 border border-slate-400 bg-white py-0.5 text-[11px] text-slate-900 shadow-xl';
+  const actionClass = 'w-full px-3 py-1.5 text-left font-semibold text-blue-900 hover:bg-[#316ac5] hover:text-white';
+  const disabledClass = 'w-full cursor-not-allowed px-3 py-1.5 text-left text-slate-400';
+
+  return (
+    <div className="flex h-screen w-full select-none flex-col overflow-hidden bg-[#f0f2f5] font-sans">
+      <header className="z-30 shrink-0 border-b border-slate-400 bg-[#ece9d8] text-[11px]">
+        <div className="flex items-center justify-between border-b border-slate-300 px-2 py-1 font-bold text-slate-800">
+          <div className="flex items-center gap-2">
+            <span className="tracking-wider text-red-700">{branchTitle}</span>
+            <span className="text-slate-400">|</span>
+            <span className="font-normal text-slate-600">ACCOUNTING SYSTEM</span>
+          </div>
+          <span className="font-mono text-[10px] font-normal text-slate-600">MediKing</span>
+        </div>
+        <nav className="relative flex items-center gap-1 px-1 py-0.5">
+          <div className="relative" ref={appMenuRef}>
+            <button type="button" className={menuClass('app')} onClick={() => setActiveMenu(activeMenu === 'app' ? null : 'app')}>
+              Menu
+            </button>
+            {activeMenu === 'app' && (
+              <div className={dropdownClass}>
+                <button type="button" onClick={onBackToLauncher} className={actionClass}>Application Selection</button>
+              </div>
+            )}
+          </div>
+          <div className="relative" ref={accountMenuRef}>
+            <button type="button" className={menuClass('account')} onClick={() => setActiveMenu(activeMenu === 'account' ? null : 'account')}>
+              Account-Department
+            </button>
+            {activeMenu === 'account' && (
+              <div className={dropdownClass}>
+                <div className="group relative">
+                  <button type="button" className="flex w-full items-center justify-between bg-[#316ac5] px-3 py-1.5 text-left font-semibold text-white">
+                    <span>Voucher Entry Section</span><span>›</span>
+                  </button>
+                  <div className="absolute left-full top-0 hidden w-64 border border-slate-400 bg-white py-0.5 text-slate-900 shadow-xl group-hover:block group-focus-within:block">
+                    <button type="button" onClick={openJournalVoucher} className={actionClass}>Journal Voucher Entry</button>
+                    <button type="button" disabled className={disabledClass}>Expense/Purchase Voucher Entry</button>
+                    <button type="button" disabled className={disabledClass}>TDS Voucher Entry</button>
+                    <button type="button" disabled className={disabledClass}>Payment Voucher</button>
+                    <button type="button" disabled className={disabledClass}>Receipt Voucher</button>
+                  </div>
+                </div>
+                <button type="button" disabled className={disabledClass}>Voucher Report Section</button>
+              </div>
+            )}
+          </div>
+          <div className="relative" ref={reportsMenuRef}>
+            <button type="button" className={menuClass('reports')} onClick={() => setActiveMenu(activeMenu === 'reports' ? null : 'reports')}>
+              Reports-Account
+            </button>
+            {activeMenu === 'reports' && (
+              <div className={dropdownClass}>
+                <button type="button" disabled className={disabledClass}>Quick Balance</button>
+                <button type="button" onClick={openStatement} className={actionClass}>Statement</button>
+                <button type="button" disabled className={disabledClass}>Supplier Section</button>
+                <button type="button" disabled className={disabledClass}>Trial Balance</button>
+                <button type="button" disabled className={disabledClass}>Final Account</button>
+                <button type="button" disabled className={disabledClass}>Aging</button>
+                <button type="button" disabled className={disabledClass}>Aging All</button>
+                <button type="button" disabled className={disabledClass}>Final Report</button>
+              </div>
+            )}
+          </div>
+          <button type="button" onClick={onBackToLauncher} className="ml-auto rounded-xs px-2 py-1 font-semibold text-rose-700 hover:bg-rose-600 hover:text-white">
+            Exit
+          </button>
+        </nav>
+      </header>
+
+      <main className="relative flex min-h-0 flex-1 flex-col justify-between overflow-hidden bg-white">
+        <div className="relative h-52 shrink-0 bg-[#2b4c7e] shadow-md">
+          <h1 className="absolute inset-x-4 top-12 text-center font-serif text-2xl font-bold tracking-widest text-white sm:top-16 sm:text-4xl">
+            {branchTitle}
+          </h1>
+          <svg className="absolute -bottom-px left-0 h-24 w-full" viewBox="0 0 1440 120" fill="none" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M0,120 L1440,120 L1440,0 C1000,100 400,20 0,120 Z" fill="white" />
+          </svg>
+        </div>
+
+        <section className="absolute left-5 top-60 z-10 space-y-3 sm:left-8 sm:top-72">
+          <p className="font-mono text-sm font-bold tracking-widest text-[#2b4c7e]">ACCOUNT DEPARTMENT</p>
+          <button type="button" onClick={openJournalVoucher} className="block rounded border border-slate-300 bg-[#ece9d8] px-4 py-2 text-left font-semibold text-slate-800 shadow-sm hover:border-blue-500 hover:bg-blue-50">
+            Journal Voucher Entry
+          </button>
+          <button type="button" onClick={openStatement} className="block rounded border border-slate-300 bg-[#ece9d8] px-4 py-2 text-left font-semibold text-slate-800 shadow-sm hover:border-blue-500 hover:bg-blue-50">
+            Account Statement
+          </button>
+        </section>
+
+        <div className="flex shrink-0 items-center justify-between border-t-2 border-rose-700 bg-[#2b4c7e] px-4 py-2 font-mono text-[11px] font-semibold text-white">
+          <span className="hidden w-1/3 truncate sm:block">{formattedDate}</span>
+          <span className="w-full text-center font-bold tracking-wider text-yellow-300 sm:w-1/3">{formattedTime}</span>
+          <span className="hidden w-1/3 text-right sm:block">{user?.name || 'ACCOUNT USER'} · ACCOUNT DEPARTMENT</span>
+        </div>
+      </main>
+
+      <JournalVoucherModal isOpen={voucherEntryOpen} onClose={() => setVoucherEntryOpen(false)} />
+      <StatementModal isOpen={statementOpen} onClose={() => setStatementOpen(false)} />
+    </div>
+  );
+}

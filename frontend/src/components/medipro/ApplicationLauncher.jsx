@@ -3,7 +3,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
 const applications = [
-  { id: 'account', label: 'Account', available: false },
+  { id: 'account', label: 'Account', available: true },
   { id: 'hmis', label: 'HMIS System', available: false },
   { id: 'medipro', label: 'Pharmacy', available: true },
   { id: 'attendance', label: 'Attendance', available: true },

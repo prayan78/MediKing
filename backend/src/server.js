@@ -57,6 +57,7 @@ app.use('/api/patients', require('./routes/patientRoutes'));
 app.use('/api/products', require('./routes/productRoutes'));
 app.use('/api/companies', require('./routes/companyRoutes'));
 app.use('/api/purchases', require('./routes/purchaseRoutes'));
+app.use('/api/journal-vouchers', require('./routes/journalVoucherRoutes'));
 app.use('/api/sales', require('./routes/salesRoutes'));
 app.use('/api/attendance', require('./routes/attendanceRoutes'));
 

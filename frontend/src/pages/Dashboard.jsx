@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import MediProWorkspace from '../components/medipro/MediProWorkspace';
 import ApplicationLauncher from '../components/medipro/ApplicationLauncher';
 import AttendanceWorkspace from '../components/medipro/AttendanceWorkspace';
+import AccountWorkspace from '../components/medipro/AccountWorkspace';
 import {
   Users,
   Stethoscope,
@@ -119,6 +120,10 @@ export default function Dashboard() {
 
   if (viewMode === 'attendance') {
     return <AttendanceWorkspace onBackToLauncher={() => handleSwitchMode('launcher')} />;
+  }
+
+  if (viewMode === 'account') {
+    return <AccountWorkspace onBackToLauncher={() => handleSwitchMode('launcher')} />;
   }
 
   if (viewMode === 'medipro') {
