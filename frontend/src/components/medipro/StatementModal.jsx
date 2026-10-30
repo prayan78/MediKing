@@ -18,7 +18,7 @@ const localDateString = (date) => `${date.getFullYear()}-${String(date.getMonth(
 const today = () => localDateString(new Date());
 const startOfYear = () => `${new Date().getFullYear()}-04-01`;
 
-export default function StatementModal({ isOpen, onClose }) {
+export default function StatementModal({ isOpen, onClose, initialDate }) {
   const [step, setStep] = useState('options');
   const [firmMode, setFirmMode] = useState('consolidate');
   const [reportType, setReportType] = useState('general-ledger');
@@ -26,13 +26,15 @@ export default function StatementModal({ isOpen, onClose }) {
   const [accounts, setAccounts] = useState([]);
   const [accountCode, setAccountCode] = useState('');
   const [from, setFrom] = useState(startOfYear);
-  const [to, setTo] = useState(today);
+  const [to, setTo] = useState(() => initialDate || localStorage.getItem('mediking_working_date') || today());
   const [report, setReport] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   useEffect(() => {
     if (!isOpen) return undefined;
+    const activeDate = initialDate || localStorage.getItem('mediking_working_date') || today();
+    setTo(activeDate);
     let cancelled = false;
     const loadAccounts = async () => {
       setError('');
@@ -48,7 +50,7 @@ export default function StatementModal({ isOpen, onClose }) {
     return () => {
       cancelled = true;
     };
-  }, [isOpen]);
+  }, [isOpen, initialDate]);
 
   const displayedEntries = useMemo(() => {
     if (!report?.entries) return [];

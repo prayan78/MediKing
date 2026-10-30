@@ -7,11 +7,11 @@ const today = () => {
   const date = new Date();
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 };
-const emptyLine = () => ({
+const emptyLine = (defaultDate = '') => ({
   accountCode: '',
   accountName: '',
   narration: '',
-  billDate: '',
+  billDate: defaultDate,
   debit: '',
   credit: '',
 });
@@ -20,11 +20,18 @@ const amount = (value) => (Number(value) || 0).toLocaleString('en-IN', {
   maximumFractionDigits: 2,
 });
 
-export default function JournalVoucherModal({ isOpen, onClose }) {
-  const [fiscalYear, setFiscalYear] = useState('FY8384');
+export default function JournalVoucherModal({ isOpen, onClose, initialDate }) {
+  const getInitialVoucherDate = () => {
+    return initialDate || localStorage.getItem('mediking_working_date') || today();
+  };
+  const [voucherDate, setVoucherDate] = useState(getInitialVoucherDate);
+  const [fiscalYear, setFiscalYear] = useState(() => {
+    const d = getInitialVoucherDate();
+    const bs = getBikramSambatDate(new Date(`${d}T12:00:00`));
+    return bs?.year ? `FY${String(bs.year).slice(-2)}${String(bs.year + 1).slice(-2)}` : 'FY8384';
+  });
   const [voucherNo, setVoucherNo] = useState('');
-  const [voucherDate, setVoucherDate] = useState(today);
-  const [lines, setLines] = useState([emptyLine(), emptyLine()]);
+  const [lines, setLines] = useState(() => [emptyLine(getInitialVoucherDate()), emptyLine(getInitialVoucherDate())]);
   const [accounts, setAccounts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -33,6 +40,14 @@ export default function JournalVoucherModal({ isOpen, onClose }) {
 
   useEffect(() => {
     if (!isOpen) return undefined;
+    const activeDate = initialDate || localStorage.getItem('mediking_working_date') || today();
+    setVoucherDate(activeDate);
+    const bs = getBikramSambatDate(new Date(`${activeDate}T12:00:00`));
+    if (bs?.year) {
+      setFiscalYear(`FY${String(bs.year).slice(-2)}${String(bs.year + 1).slice(-2)}`);
+    }
+    setLines([emptyLine(activeDate), emptyLine(activeDate)]);
+
     let cancelled = false;
     const loadFormData = async () => {
       setLoading(true);
@@ -57,7 +72,7 @@ export default function JournalVoucherModal({ isOpen, onClose }) {
     return () => {
       cancelled = true;
     };
-  }, [isOpen]);
+  }, [isOpen, initialDate]);
 
   const totals = useMemo(() => lines.reduce((result, line) => ({
     debit: result.debit + (Number(line.debit) || 0),
@@ -107,7 +122,8 @@ export default function JournalVoucherModal({ isOpen, onClose }) {
       });
       setNotice(`Journal voucher ${response.data.data.voucherNo} posted successfully.`);
       setVoucherNo(response.data.data.voucherNo);
-      setLines([emptyLine(), emptyLine()]);
+      const activeDate = voucherDate || today();
+      setLines([emptyLine(activeDate), emptyLine(activeDate)]);
       try {
         const [numberResponse, accountResponse] = await Promise.all([
           api.get('/journal-vouchers/next-number'),
@@ -232,7 +248,7 @@ export default function JournalVoucherModal({ isOpen, onClose }) {
           </datalist>
         </div>
         <div className="flex flex-wrap items-center justify-between gap-2 border-t border-slate-300 bg-[#f1f5f9] px-3 py-2">
-          <button type="button" onClick={() => setLines((current) => [...current, emptyLine()])} className="border border-slate-400 bg-white px-3 py-1.5 font-semibold hover:bg-blue-50">Add Line</button>
+          <button type="button" onClick={() => setLines((current) => [...current, emptyLine(voucherDate)])} className="border border-slate-400 bg-white px-3 py-1.5 font-semibold hover:bg-blue-50">Add Line</button>
           <span className={Math.round(totals.debit * 100) === Math.round(totals.credit * 100) ? 'font-semibold text-emerald-700' : 'font-semibold text-rose-700'}>
             {Math.round(totals.debit * 100) === Math.round(totals.credit * 100) ? 'Balanced' : 'Difference'}: {amount(Math.abs(totals.debit - totals.credit))}
           </span>
