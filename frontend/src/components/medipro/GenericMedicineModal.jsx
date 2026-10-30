@@ -90,8 +90,8 @@ export default function GenericMedicineModal({ isOpen, onClose }) {
   return (
     <>
       <div className="fixed inset-0 z-[55] flex items-center justify-center bg-black/40 select-none font-sans">
-        <section className="flex max-h-[82vh] w-[450px] max-w-[95vw] flex-col border-2 border-slate-600 bg-[#ece9d8] text-xs text-slate-800 shadow-2xl">
-          <header className="flex items-center justify-between bg-[#2b4c7e] px-2 py-1 font-bold text-white">
+        <section className="flex max-h-[82vh] w-[450px] max-w-[95vw] flex-col border-2 border-slate-600 bg-[#f1f5f9] text-xs text-slate-800 shadow-2xl">
+          <header className="flex items-center justify-between bg-[#0f766e] px-2 py-1 font-bold text-white">
             <span>GenericName</span>
             <button onClick={closeModal} aria-label="Close generic medicine list" className="px-1 hover:bg-rose-600">×</button>
           </header>
@@ -123,7 +123,7 @@ export default function GenericMedicineModal({ isOpen, onClose }) {
             </div>
           </div>
           <div className="min-h-0 flex-1 overflow-auto px-2 pb-2">
-            <div className="sticky top-0 border-b border-slate-400 bg-[#e4e1d1] px-2 py-1 font-semibold">Generic Name</div>
+            <div className="sticky top-0 border-b border-slate-400 bg-[#e2e8f0] px-2 py-1 font-semibold">Generic Name</div>
             {loading ? (
               <p className="p-4 text-center text-slate-500">Loading generic medicines...</p>
             ) : error ? (
@@ -132,7 +132,7 @@ export default function GenericMedicineModal({ isOpen, onClose }) {
               <button
                 key={group.genericName}
                 onClick={() => setSelectedGeneric(group)}
-                className="flex w-full items-center gap-1 border-b border-slate-100 px-1 py-1 text-left hover:bg-[#316ac5] hover:text-white"
+                className="flex w-full items-center gap-1 border-b border-slate-100 px-1 py-1 text-left hover:bg-[#0f766e] hover:text-white"
               >
                 <span aria-hidden="true">›</span>
                 <span>{group.genericName}</span>
@@ -146,8 +146,8 @@ export default function GenericMedicineModal({ isOpen, onClose }) {
 
       {addGenericOpen && (
         <div className="fixed inset-0 z-[65] flex items-center justify-center bg-black/45 select-none font-sans">
-          <form onSubmit={handleAddGeneric} className="w-[360px] max-w-[94vw] border-2 border-slate-600 bg-[#ece9d8] text-xs text-slate-800 shadow-2xl">
-            <header className="flex items-center justify-between bg-[#2b4c7e] px-2 py-1 font-bold text-white">
+          <form onSubmit={handleAddGeneric} className="w-[360px] max-w-[94vw] border-2 border-slate-600 bg-[#f1f5f9] text-xs text-slate-800 shadow-2xl">
+            <header className="flex items-center justify-between bg-[#0f766e] px-2 py-1 font-bold text-white">
               <span>Add Generic Name</span>
               <button type="button" onClick={() => setAddGenericOpen(false)} aria-label="Close add generic dialog" className="px-1 hover:bg-rose-600">×</button>
             </header>
@@ -176,8 +176,8 @@ export default function GenericMedicineModal({ isOpen, onClose }) {
 
       {selectedGeneric && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/45 select-none font-sans">
-          <section className="flex max-h-[88vh] w-[1120px] max-w-[97vw] flex-col overflow-hidden border-2 border-slate-600 bg-[#ece9d8] text-xs text-slate-800 shadow-2xl">
-            <header className="flex items-center justify-between bg-[#2b4c7e] px-2 py-1 font-bold text-white">
+          <section className="flex max-h-[88vh] w-[1120px] max-w-[97vw] flex-col overflow-hidden border-2 border-slate-600 bg-[#f1f5f9] text-xs text-slate-800 shadow-2xl">
+            <header className="flex items-center justify-between bg-[#0f766e] px-2 py-1 font-bold text-white">
               <span>Stock Detail - {selectedGeneric.genericName}</span>
               <button onClick={() => setSelectedGeneric(null)} aria-label="Close stock detail" className="px-1 hover:bg-rose-600">×</button>
             </header>
@@ -187,7 +187,7 @@ export default function GenericMedicineModal({ isOpen, onClose }) {
             </div>
             <div className="flex-1 overflow-auto bg-white">
               <table className="w-full border-collapse text-left text-[11px]">
-                <thead className="sticky top-0 bg-[#ece9d8]">
+                <thead className="sticky top-0 bg-[#f1f5f9]">
                   <tr className="border-b border-slate-500">
                     {['Code', 'Particular', 'WSU', 'Min', 'Bo', 'Rack No.', 'Unit', 'Qty', 'C price', 'MRP', 'S price', 'With Tax', 'Mfg / Life'].map((heading) => (
                       <th key={heading} className="whitespace-nowrap border-r border-slate-300 px-2 py-1">{heading}</th>

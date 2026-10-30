@@ -3,19 +3,21 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import AppLayout from './components/layout/AppLayout';
 import Login from './pages/Login';
+import Signup from './pages/Signup';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 import Dashboard from './pages/Dashboard';
+import AdminManagement from './pages/AdminManagement';
+import SystemSettings from './pages/SystemSettings';
 import ModulePlaceholder from './pages/ModulePlaceholder';
 import {
   Users,
   Stethoscope,
   BedDouble,
-  Pill,
   FlaskConical,
   Receipt,
   Boxes,
-  Building2,
   BarChart3,
-  Settings,
 } from 'lucide-react';
 
 // Protected Route Guard
@@ -46,6 +48,9 @@ export default function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
 
           <Route
             path="/"
@@ -166,19 +171,7 @@ export default function App() {
 
             <Route
               path="admin"
-              element={
-                <ModulePlaceholder
-                  title="Hospital Administration & Staff Management"
-                  description="User management, role assignments, department setup, doctor fee schedules, and branch controls."
-                  icon={Building2}
-                  phase="Phase 6 Feature"
-                  highlights={[
-                    'Granular role-based access control across 10 hospital roles.',
-                    'Branch setup for multi-location healthcare clinics and hospitals.',
-                    'Doctor consultation fees and schedule management.',
-                  ]}
-                />
-              }
+              element={<AdminManagement />}
             />
 
             <Route
@@ -200,19 +193,7 @@ export default function App() {
 
             <Route
               path="settings"
-              element={
-                <ModulePlaceholder
-                  title="System & Institutional Settings"
-                  description="Hospital branding, PAN/VAT configurations, invoice prefixes, pharmacy license, and security audit logs."
-                  icon={Settings}
-                  phase="Phase 6 Feature"
-                  highlights={[
-                    'Institutional headers for printable invoices, prescription slips, and reports.',
-                    'Tax configuration (13% VAT, service charge toggle, IRD sync flags).',
-                    'Full audit logging tracking every financial and clinical modification.',
-                  ]}
-                />
-              }
+              element={<SystemSettings />}
             />
           </Route>
 

@@ -1,5 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import api from '../../services/api';
+import SystemDateInput from '../SystemDateInput';
+import { formatSystemDate } from '../../utils/nepaliDate';
 
 const REPORT_TYPES = [
   { value: 'general-ledger', label: 'General Ledger' },
@@ -12,7 +14,8 @@ const amount = (value) => (Number(value) || 0).toLocaleString('en-IN', {
   minimumFractionDigits: 2,
   maximumFractionDigits: 2,
 });
-const today = () => new Date().toISOString().slice(0, 10);
+const localDateString = (date) => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+const today = () => localDateString(new Date());
 const startOfYear = () => `${new Date().getFullYear()}-04-01`;
 
 export default function StatementModal({ isOpen, onClose }) {
@@ -96,10 +99,10 @@ export default function StatementModal({ isOpen, onClose }) {
 
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/45 p-2 font-sans text-xs text-slate-800">
-      <div className={`flex max-h-[94vh] flex-col overflow-hidden border-2 border-slate-600 bg-[#ece9d8] shadow-2xl ${step === 'report' ? 'w-[1100px] max-w-[98vw]' : 'w-[470px] max-w-[96vw]'}`}>
-        <div className="flex items-center justify-between bg-[#2b4c7e] px-2 py-1 font-bold text-white">
+      <div className={`flex max-h-[94vh] flex-col overflow-hidden border-2 border-slate-600 bg-[#f1f5f9] shadow-2xl ${step === 'report' ? 'w-[1100px] max-w-[98vw]' : 'w-[470px] max-w-[96vw]'}`}>
+        <div className="flex items-center justify-between bg-[#0f766e] px-2 py-1 font-bold text-white">
           <span>Statement{step === 'report' ? ' - General Ledger' : ''}</span>
-          <button onClick={close} aria-label="Close" className="border border-slate-600 bg-[#ece9d8] px-1 font-bold text-slate-900 hover:bg-rose-600 hover:text-white">×</button>
+          <button onClick={close} aria-label="Close" className="border border-slate-600 bg-[#f1f5f9] px-1 font-bold text-slate-900 hover:bg-rose-600 hover:text-white">×</button>
         </div>
         {error && <div role="alert" className="border-b border-rose-300 bg-rose-100 px-3 py-2 text-rose-800">{error}</div>}
 
@@ -144,8 +147,8 @@ export default function StatementModal({ isOpen, onClose }) {
               <div className="grid grid-cols-[90px_1fr] items-center gap-2">
                 <span className="font-bold">Date Range</span>
                 <div className="flex flex-wrap items-center gap-2">
-                  <label className="flex items-center gap-1">From <input type="date" required value={from} onChange={(event) => setFrom(event.target.value)} className="border border-slate-400 bg-white px-2 py-1" /></label>
-                  <label className="flex items-center gap-1">To <input type="date" required value={to} onChange={(event) => setTo(event.target.value)} className="border border-slate-400 bg-white px-2 py-1" /></label>
+                  <label className="flex items-center gap-1">From <SystemDateInput required value={from} onChange={(event) => setFrom(event.target.value)} className="border border-slate-400 bg-white px-2 py-1" /></label>
+                  <label className="flex items-center gap-1">To <SystemDateInput required value={to} onChange={(event) => setTo(event.target.value)} className="border border-slate-400 bg-white px-2 py-1" /></label>
                 </div>
               </div>
               <label className="grid grid-cols-[90px_1fr] items-center gap-2">
@@ -216,7 +219,7 @@ export default function StatementModal({ isOpen, onClose }) {
                     const voucherDate = new Date(`${String(entry.voucherDate).slice(0, 10)}T12:00:00`);
                     return (
                       <tr key={`${entry.voucherNo}-${entry.accountCode}-${index}`} className="odd:bg-white even:bg-slate-50">
-                        <td className="border border-slate-300 px-2 py-1.5">{voucherDate.toLocaleDateString()}</td>
+                        <td className="border border-slate-300 px-2 py-1.5">{formatSystemDate(voucherDate)}</td>
                         <td className="border border-slate-300 px-2 py-1.5">{entry.voucherNo}</td>
                         <td className="border border-slate-300 px-2 py-1.5">{entry.accountCode}</td>
                         <td className="border border-slate-300 px-2 py-1.5">{entry.accountName}</td>

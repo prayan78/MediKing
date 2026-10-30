@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
-import { getBikramSambatDate } from '../../utils/nepaliDate';
+import { formatSystemDate, getBikramSambatDate } from '../../utils/nepaliDate';
+import SystemDateInput from '../SystemDateInput';
 
 export default function PurchaseEntryModal({ isOpen, onClose, onPurchaseCreated }) {
   const [fiscalYear, setFiscalYear] = useState('FY7879');
   const [mrnNo, setMrnNo] = useState('FAPU0000003');
-  const [purchDateAd, setPurchDateAd] = useState(new Date().toISOString().split('T')[0]);
-  const [purchDateBs, setPurchDateBs] = useState(() => getBikramSambatDate(new Date()).formatted);
+  const [purchDateAd, setPurchDateAd] = useState(() => {
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+  });
+  const [purchDateBs, setPurchDateBs] = useState(() => getBikramSambatDate(new Date()).numeric);
   const [vatType, setVatType] = useState('Inclusive');
   const [discountOn, setDiscountOn] = useState('After CC');
   const [ccChargeType, setCcChargeType] = useState('Inclusive');
@@ -25,7 +29,7 @@ export default function PurchaseEntryModal({ isOpen, onClose, onPurchaseCreated 
   const [supplierName, setSupplierName] = useState('BANEPA MEDISTORE');
   const [billNo, setBillNo] = useState('ABC001');
   const [billDateAd, setBillDateAd] = useState('2021-08-17');
-  const [billDateBs, setBillDateBs] = useState('2078/05/01');
+  const [billDateBs, setBillDateBs] = useState(() => getBikramSambatDate(new Date('2021-08-17T12:00:00')).numeric);
   const [stockistPurchase, setStockistPurchase] = useState(false);
 
   // Available medicines for dropdown
@@ -40,7 +44,7 @@ export default function PurchaseEntryModal({ isOpen, onClose, onPurchaseCreated 
       wsunit: 'VIAL',
       pack: '1',
       batch: 'TR-9921',
-      expiry: '2026/08/29',
+      expiry: '2026-08-29',
       qty: 10,
       free: 0,
       totalQty: 10,
@@ -56,7 +60,7 @@ export default function PurchaseEntryModal({ isOpen, onClose, onPurchaseCreated 
       wsunit: 'CAP',
       pack: '10X10',
       batch: 'KD-112',
-      expiry: '2026/05/15',
+      expiry: '2026-05-15',
       qty: 10,
       free: 0,
       totalQty: 10,
@@ -75,7 +79,7 @@ export default function PurchaseEntryModal({ isOpen, onClose, onPurchaseCreated 
     wsunit: 'TAB',
     pack: '10X10',
     batch: '',
-    expiry: '2026/12/31',
+    expiry: '2026-12-31',
     qty: 1,
     free: 0,
     totalQty: 1,
@@ -127,7 +131,7 @@ export default function PurchaseEntryModal({ isOpen, onClose, onPurchaseCreated 
         wsunit: med.unit || 'TAB',
         pack: med.packing || '1',
         batch: `BAT-${Math.floor(100 + Math.random() * 900)}`,
-        expiry: '2027/06/30',
+        expiry: '2027-06-30',
         qty: 10,
         free: 0,
         totalQty: 10,
@@ -167,7 +171,7 @@ export default function PurchaseEntryModal({ isOpen, onClose, onPurchaseCreated 
       wsunit: 'TAB',
       pack: '10X10',
       batch: '',
-      expiry: '2026/12/31',
+      expiry: '2026-12-31',
       qty: 1,
       free: 0,
       totalQty: 1,
@@ -239,16 +243,16 @@ export default function PurchaseEntryModal({ isOpen, onClose, onPurchaseCreated 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 select-none font-sans">
       {/* Exact MediPro Purchase Entry Window (Image 3) */}
-      <div className="w-[1020px] max-w-[98vw] max-h-[96vh] bg-[#ece9d8] border-2 border-slate-600 shadow-2xl flex flex-col text-xs text-slate-800 overflow-hidden">
+      <div className="w-[1020px] max-w-[98vw] max-h-[96vh] bg-[#f1f5f9] border-2 border-slate-600 shadow-2xl flex flex-col text-xs text-slate-800 overflow-hidden">
         {/* Title Bar */}
-        <div className="bg-[#2b4c7e] text-white px-2 py-1 flex items-center justify-between font-bold text-xs">
+        <div className="bg-[#0f766e] text-white px-2 py-1 flex items-center justify-between font-bold text-xs">
           <div className="flex items-center gap-1.5">
             <span className="text-yellow-300">📦</span>
             <span>Purchase Entry</span>
           </div>
           <button
             onClick={onClose}
-            className="w-4 h-4 bg-[#ece9d8] text-slate-900 hover:bg-rose-600 hover:text-white flex items-center justify-center font-bold text-xs rounded-xs border border-slate-600 shadow-xs"
+            className="w-4 h-4 bg-[#f1f5f9] text-slate-900 hover:bg-rose-600 hover:text-white flex items-center justify-center font-bold text-xs rounded-xs border border-slate-600 shadow-xs"
           >
             ×
           </button>
@@ -270,7 +274,7 @@ export default function PurchaseEntryModal({ isOpen, onClose, onPurchaseCreated 
         )}
 
         {/* Top Header Form Controls (Exact replica of Image 3) */}
-        <div className="p-2 space-y-1 bg-[#ece9d8] border-b border-slate-300 text-[11px]">
+        <div className="p-2 space-y-1 bg-[#f1f5f9] border-b border-slate-300 text-[11px]">
           {/* Row 1: Fiscal Year, MRN, Dates, Taxes & Discounts */}
           <div className="grid grid-cols-12 gap-1.5 items-center">
             <div className="col-span-1 font-bold text-slate-800">Fiscal Year</div>
@@ -298,18 +302,14 @@ export default function PurchaseEntryModal({ isOpen, onClose, onPurchaseCreated 
 
             <div className="col-span-1 font-bold text-right text-slate-800">Purch. Date</div>
             <div className="col-span-3 flex items-center gap-1">
-              <input
-                type="date"
+              <SystemDateInput
                 value={purchDateAd}
                 onChange={(e) => {
                   setPurchDateAd(e.target.value);
-                  setPurchDateBs(getBikramSambatDate(new Date(e.target.value)).formatted);
+                  if (e.target.value) setPurchDateBs(getBikramSambatDate(new Date(`${e.target.value}T12:00:00`)).numeric);
                 }}
                 className="w-28 bg-white border border-slate-400 px-1 py-0.5 font-mono text-[10px]"
               />
-              <span className="font-mono text-slate-500 text-[10px] bg-slate-200 px-1 border border-slate-300">
-                {purchDateBs}
-              </span>
             </div>
 
             <div className="col-span-1 font-semibold text-right">Vat</div>
@@ -476,18 +476,14 @@ export default function PurchaseEntryModal({ isOpen, onClose, onPurchaseCreated 
 
             <div className="col-span-1 font-bold text-right text-slate-800">Bill Date</div>
             <div className="col-span-3 flex items-center gap-1">
-              <input
-                type="date"
+              <SystemDateInput
                 value={billDateAd}
                 onChange={(e) => {
                   setBillDateAd(e.target.value);
-                  setBillDateBs(getBikramSambatDate(new Date(e.target.value)).formatted);
+                  if (e.target.value) setBillDateBs(getBikramSambatDate(new Date(`${e.target.value}T12:00:00`)).numeric);
                 }}
                 className="w-28 bg-white border border-slate-400 px-1 py-0.5 font-mono text-[10px]"
               />
-              <span className="font-mono text-slate-500 text-[10px] bg-slate-200 px-1 border border-slate-300">
-                {billDateBs}
-              </span>
             </div>
           </div>
         </div>
@@ -516,9 +512,8 @@ export default function PurchaseEntryModal({ isOpen, onClose, onPurchaseCreated 
             className="w-20 bg-white border border-slate-400 px-1 py-0.5 font-mono text-xs uppercase"
           />
 
-          <input
-            type="text"
-            placeholder="Expiry (YYYY/MM/DD)"
+          <SystemDateInput
+            aria-label="Medicine expiry date"
             value={currentItem.expiry}
             onChange={(e) => handleCurrentItemChange('expiry', e.target.value)}
             className="w-24 bg-white border border-slate-400 px-1 py-0.5 font-mono text-xs"
@@ -569,7 +564,7 @@ export default function PurchaseEntryModal({ isOpen, onClose, onPurchaseCreated 
           <button
             type="button"
             onClick={handleAddItem}
-            className="px-3 py-0.5 bg-[#316ac5] text-white font-bold rounded-xs hover:bg-blue-700 shadow-xs"
+            className="px-3 py-0.5 bg-[#0f766e] text-white font-bold rounded-xs hover:bg-blue-700 shadow-xs"
           >
             + Add Row
           </button>
@@ -578,7 +573,7 @@ export default function PurchaseEntryModal({ isOpen, onClose, onPurchaseCreated 
         {/* High Density Table Grid (Exact replica of Image 3) */}
         <div className="flex-1 bg-white border-b border-slate-400 overflow-y-auto min-h-[220px]">
           <table className="w-full text-left border-collapse text-[11px] font-sans">
-            <thead className="bg-[#ece9d8] sticky top-0 border-b border-slate-400 text-slate-800 font-semibold select-none z-10">
+            <thead className="bg-[#f1f5f9] sticky top-0 border-b border-slate-400 text-slate-800 font-semibold select-none z-10">
               <tr>
                 <th className="w-5 py-1 px-1 border-r border-slate-300"></th>
                 <th className="py-1 px-2 border-r border-slate-300 w-16">Md Code</th>
@@ -630,7 +625,7 @@ export default function PurchaseEntryModal({ isOpen, onClose, onPurchaseCreated 
                       {it.batch}
                     </td>
                     <td className="py-0.5 px-2 border-r border-slate-200 font-mono text-[10px]">
-                      {it.expiry}
+                      {formatSystemDate(it.expiry)}
                     </td>
                     <td className="py-0.5 px-1 border-r border-slate-200 text-right font-mono font-bold">
                       {it.qty}
@@ -674,7 +669,7 @@ export default function PurchaseEntryModal({ isOpen, onClose, onPurchaseCreated 
         </div>
 
         {/* Bottom Status & Posting Buttons (Exact styling of Image 3) */}
-        <div className="bg-[#ece9d8] border-t border-slate-300 p-2 flex items-center justify-between text-xs">
+        <div className="bg-[#f1f5f9] border-t border-slate-300 p-2 flex items-center justify-between text-xs">
           <div className="flex items-center gap-4">
             <span className="font-bold text-slate-700">Stock: {items.length} items</span>
           </div>
@@ -711,4 +706,3 @@ export default function PurchaseEntryModal({ isOpen, onClose, onPurchaseCreated 
     </div>
   );
 }
-

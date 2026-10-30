@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import api from '../../services/api';
-import { getBikramSambatDate } from '../../utils/nepaliDate';
+import { formatSystemDate } from '../../utils/nepaliDate';
+import SystemDateInput from '../SystemDateInput';
 
 const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const SHIFTS = [
@@ -47,11 +48,9 @@ const getWeekDates = (startDate) => {
   return DAYS.map((day, index) => {
     const date = new Date(start);
     date.setDate(start.getDate() + index);
-    const bs = getBikramSambatDate(date);
     return {
       day,
       date,
-      bs: `${bs.year}/${String(bs.month + 1).padStart(2, '0')}/${String(bs.day).padStart(2, '0')}`,
     };
   });
 };
@@ -183,8 +182,8 @@ export default function WeeklyRosterModal({ isOpen, onClose, initialDepartment =
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-2 font-sans text-xs text-slate-800">
-      <section className="flex max-h-[92vh] w-[1120px] max-w-[98vw] flex-col overflow-hidden border-2 border-slate-600 bg-[#ece9d8] shadow-2xl">
-        <header className="flex items-center justify-between bg-[#2b4c7e] px-2 py-1 font-bold text-white">
+      <section className="flex max-h-[92vh] w-[1120px] max-w-[98vw] flex-col overflow-hidden border-2 border-slate-600 bg-[#f1f5f9] shadow-2xl">
+        <header className="flex items-center justify-between bg-[#0f766e] px-2 py-1 font-bold text-white">
           <span>WeeklyRoster_frm</span>
           <button onClick={onClose} aria-label="Close weekly roster" className="px-1 hover:bg-rose-600">×</button>
         </header>
@@ -197,7 +196,7 @@ export default function WeeklyRosterModal({ isOpen, onClose, initialDepartment =
             <input value={department} onChange={(event) => setDepartment(event.target.value)} className="w-56 border border-slate-400 bg-white px-2 py-1 font-normal" />
           </label>
           <label className="flex flex-col gap-1 font-semibold">Start Date
-            <input type="date" value={weekStart} onChange={(event) => { if (event.target.value) { setLoading(true); setWeekStart(event.target.value); } }} className="border border-slate-400 bg-white px-2 py-1 font-normal" />
+            <SystemDateInput value={weekStart} onChange={(event) => { if (event.target.value) { setLoading(true); setWeekStart(event.target.value); } }} className="border border-slate-400 bg-white px-2 py-1 font-normal" />
           </label>
           <div className="pb-1 text-slate-600">BS Week Start: {weekDates[0].bs}</div>
           <button onClick={importPreviousWeek} disabled={saving} className="ml-auto border border-slate-500 bg-gradient-to-b from-white to-[#dcdcdc] px-3 py-1 font-semibold disabled:opacity-50">
@@ -220,7 +219,7 @@ export default function WeeklyRosterModal({ isOpen, onClose, initialDepartment =
             <p className="p-8 text-center text-slate-500">Loading attendance employees...</p>
           ) : (
             <table className="w-full border-collapse text-[11px]">
-              <thead className="sticky top-0 z-10 bg-[#e4e1d1]">
+              <thead className="sticky top-0 z-10 bg-[#e2e8f0]">
                 <tr className="border-b border-slate-500">
                   <th className="whitespace-nowrap border-r border-slate-300 px-2 py-1 text-left">Emp_code</th>
                   <th className="min-w-40 border-r border-slate-300 px-2 py-1 text-left">Employee</th>
@@ -254,8 +253,8 @@ export default function WeeklyRosterModal({ isOpen, onClose, initialDepartment =
 
       {editorOpen && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/45 p-2 font-sans text-[11px] text-slate-800">
-          <form onSubmit={saveRoster} className="flex max-h-[94vh] w-[1050px] max-w-[98vw] flex-col overflow-hidden border-2 border-slate-600 bg-[#ece9d8] shadow-2xl">
-            <header className="flex items-center justify-between bg-[#2b4c7e] px-2 py-1 font-bold text-white">
+          <form onSubmit={saveRoster} className="flex max-h-[94vh] w-[1050px] max-w-[98vw] flex-col overflow-hidden border-2 border-slate-600 bg-[#f1f5f9] shadow-2xl">
+            <header className="flex items-center justify-between bg-[#0f766e] px-2 py-1 font-bold text-white">
               <span>Weekly Roster Setup</span>
               <button type="button" onClick={() => setEditorOpen(false)} aria-label="Close roster editor" className="px-1 hover:bg-rose-600">×</button>
             </header>
@@ -268,13 +267,13 @@ export default function WeeklyRosterModal({ isOpen, onClose, initialDepartment =
                 </select>
               </label>
               <span className="font-semibold">{selectedEmployee?.name || ''}</span>
-              <span className="ml-auto">Start Date: {weekStart} / {weekDates[0].bs}</span>
+              <span className="ml-auto">Start Date: {formatSystemDate(weekDates[0].date)}</span>
             </div>
             <div className="flex-1 overflow-auto p-2">
               <div className="min-w-[970px]">
-                <div className="grid grid-cols-[150px_repeat(7,minmax(112px,1fr))] border-b border-slate-500 bg-[#e4e1d1] font-semibold">
+                <div className="grid grid-cols-[150px_repeat(7,minmax(112px,1fr))] border-b border-slate-500 bg-[#e2e8f0] font-semibold">
                   <div className="p-1">Day / Date</div>
-                  {weekDates.map((date) => <div key={date.day} className="border-l border-slate-300 p-1 text-center">{date.day}<br />{date.bs}</div>)}
+                  {weekDates.map((date) => <div key={date.day} className="border-l border-slate-300 p-1 text-center">{date.day}<br />{formatSystemDate(date.date)}</div>)}
                 </div>
                 <div className="grid grid-cols-[150px_repeat(7,minmax(112px,1fr))]">
                   <div className="space-y-2 p-2 font-semibold">

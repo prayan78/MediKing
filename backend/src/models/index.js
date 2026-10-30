@@ -15,6 +15,7 @@ const Company = require('./Company');
 const PurchaseEntry = require('./PurchaseEntry');
 const WeeklyRoster = require('./WeeklyRoster');
 const JournalVoucher = require('./JournalVoucher');
+const Role = require('./Role');
 
 module.exports = {
   User,
@@ -34,4 +35,5 @@ module.exports = {
   PurchaseEntry,
   WeeklyRoster,
   JournalVoucher,
+  Role,
 };

@@ -129,7 +129,7 @@ export default function Header({
         {/* Switch to Original MediPro Dashboard Button */}
         <button
           onClick={handleSwitchToOriginal}
-          className="flex items-center gap-1.5 px-3 py-1.5 bg-[#2b4c7e] hover:bg-[#1e365b] text-white rounded-lg text-xs font-bold transition shadow-xs border border-blue-400/40"
+          className="flex items-center gap-1.5 px-3 py-1.5 bg-[#0f766e] hover:bg-[#1e365b] text-white rounded-lg text-xs font-bold transition shadow-xs border border-blue-400/40"
           title="Switch back to Original MediPro Desktop Dashboard"
         >
           <Monitor size={15} className="text-yellow-300" />

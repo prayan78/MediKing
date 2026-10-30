@@ -8,7 +8,25 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem('mediking_token') || null);
   const [branches, setBranches] = useState([]);
   const [currentBranch, setCurrentBranch] = useState(null);
+  const [dateSystem, setDateSystemState] = useState(
+    () => localStorage.getItem('mediking_date_system') || 'AD'
+  );
   const [loading, setLoading] = useState(true);
+
+  const setDateSystem = (value) => {
+    localStorage.setItem('mediking_date_system', value);
+    setDateSystemState(value);
+    window.dispatchEvent(new CustomEvent('date-system-changed', { detail: value }));
+  };
+
+  const loadDateSystem = async () => {
+    try {
+      const { data } = await api.get('/settings');
+      setDateSystem(data.data.dateSystem || 'AD');
+    } catch (error) {
+      console.error('[Settings Init Error]:', error);
+    }
+  };
 
   // Initialize auth
   useEffect(() => {
@@ -19,6 +37,7 @@ export const AuthProvider = ({ children }) => {
           const { data } = await api.get('/auth/me');
           setUser(data.user);
           setCurrentBranch(data.user.branch);
+          await loadDateSystem();
 
           // Fetch branches list
           const branchRes = await api.get('/branches');
@@ -34,6 +53,27 @@ export const AuthProvider = ({ children }) => {
     initAuth();
   }, [token]);
 
+  useEffect(() => {
+    if (!token) return undefined;
+
+    const syncDateSystem = async () => {
+      try {
+        const { data } = await api.get('/settings');
+        const system = data.data.dateSystem || 'AD';
+        if (system !== localStorage.getItem('mediking_date_system')) setDateSystem(system);
+      } catch (error) {
+        console.error('[Date Preference Sync Error]:', error);
+      }
+    };
+
+    const interval = window.setInterval(syncDateSystem, 60000);
+    window.addEventListener('focus', syncDateSystem);
+    return () => {
+      window.clearInterval(interval);
+      window.removeEventListener('focus', syncDateSystem);
+    };
+  }, [token]);
+
   const login = async (usernameOrEmail, password) => {
     const res = await api.post('/auth/login', { usernameOrEmail, password });
     const { token: newToken, user: newUser } = res.data;
@@ -43,6 +83,7 @@ export const AuthProvider = ({ children }) => {
     setToken(newToken);
     setUser(newUser);
     setCurrentBranch(newUser.branch);
+    await loadDateSystem();
 
     // Refresh branches
     try {
@@ -84,6 +125,8 @@ export const AuthProvider = ({ children }) => {
         token,
         branches,
         currentBranch,
+        dateSystem,
+        setDateSystem,
         setCurrentBranch,
         switchBranch,
         login,

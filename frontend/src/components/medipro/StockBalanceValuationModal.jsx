@@ -131,13 +131,13 @@ export default function StockBalanceValuationModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 select-none font-sans">
       {/* Exact MediPro Window styling matching Image 4 */}
-      <div className="w-[1050px] max-w-[98vw] max-h-[96vh] bg-[#ece9d8] border-2 border-slate-600 shadow-2xl flex flex-col text-xs text-slate-800 overflow-hidden">
+      <div className="w-[1050px] max-w-[98vw] max-h-[96vh] bg-[#f1f5f9] border-2 border-slate-600 shadow-2xl flex flex-col text-xs text-slate-800 overflow-hidden">
         {/* Title Bar */}
-        <div className="bg-[#2b4c7e] text-white px-2 py-1 flex items-center justify-between font-bold text-xs">
+        <div className="bg-[#0f766e] text-white px-2 py-1 flex items-center justify-between font-bold text-xs">
           <span>Stock Balance At</span>
           <button
             onClick={onClose}
-            className="w-4 h-4 bg-[#ece9d8] text-slate-900 hover:bg-rose-600 hover:text-white flex items-center justify-center font-bold text-xs rounded-xs border border-slate-600 shadow-xs"
+            className="w-4 h-4 bg-[#f1f5f9] text-slate-900 hover:bg-rose-600 hover:text-white flex items-center justify-center font-bold text-xs rounded-xs border border-slate-600 shadow-xs"
           >
             ×
           </button>
@@ -163,7 +163,7 @@ export default function StockBalanceValuationModal({
         </div>
 
         {/* Toolbar / Filters Area (Image 4) */}
-        <div className="p-2 bg-[#ece9d8] border-b border-slate-300 space-y-1.5 text-[11px]">
+        <div className="p-2 bg-[#f1f5f9] border-b border-slate-300 space-y-1.5 text-[11px]">
           <div className="flex items-center justify-between flex-wrap gap-2">
             {/* Left filter group */}
             <div className="flex items-center gap-2 flex-wrap">
@@ -326,7 +326,7 @@ export default function StockBalanceValuationModal({
         {/* Data Table (Exact representation of Image 4) */}
         <div className="flex-1 bg-white overflow-auto border-t border-slate-400">
           <table className="w-full text-left text-xs font-sans border-collapse border-b border-slate-300">
-            <thead className="bg-[#e4e1d1] sticky top-0 border-b border-slate-400 text-slate-900 select-none z-10">
+            <thead className="bg-[#e2e8f0] sticky top-0 border-b border-slate-400 text-slate-900 select-none z-10">
               <tr>
                 <th className="w-6 p-1 border-r border-slate-300 text-center"></th>
                 <th className="p-1 px-2 border-r border-slate-300 font-semibold w-24">Md Code</th>
@@ -347,7 +347,7 @@ export default function StockBalanceValuationModal({
                       key={`grp-${idx}`}
                       onClick={() => setSelectedIndex(idx)}
                       className={`cursor-pointer ${
-                        isSelected ? 'bg-[#316ac5] text-white font-bold' : 'bg-slate-50 font-bold text-slate-900'
+                        isSelected ? 'bg-[#0f766e] text-white font-bold' : 'bg-slate-50 font-bold text-slate-900'
                       }`}
                     >
                       <td className="p-0.5 text-center text-[10px]">
@@ -367,7 +367,7 @@ export default function StockBalanceValuationModal({
                     onClick={() => setSelectedIndex(idx)}
                     className={`cursor-pointer transition-colors border-b border-slate-100 ${
                       isSelected
-                        ? 'bg-[#316ac5] text-white'
+                        ? 'bg-[#0f766e] text-white'
                         : idx % 2 === 0
                         ? 'bg-white hover:bg-blue-50'
                         : 'bg-[#fbfbfb] hover:bg-blue-50'
@@ -432,7 +432,7 @@ export default function StockBalanceValuationModal({
         </div>
 
         {/* Footer info bar */}
-        <div className="bg-[#ece9d8] border-t border-slate-300 px-3 py-1 text-[11px] text-slate-700 flex items-center justify-between">
+        <div className="bg-[#f1f5f9] border-t border-slate-300 px-3 py-1 text-[11px] text-slate-700 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <span>
               Total Items:{' '}

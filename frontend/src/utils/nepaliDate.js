@@ -1,58 +1,65 @@
-// Approximate Nepali Bikram Sambat (B.S.) date utility
-const nepaliMonths = [
-  'Baisakh',
-  'Jestha',
-  'Ashadh',
-  'Shrawan',
-  'Bhadra',
-  'Ashwin',
-  'Kartik',
-  'Mangsir',
-  'Poush',
-  'Magh',
-  'Falgun',
-  'Chaitra',
-];
+import NepaliDate from 'nepali-date-converter';
 
 export function getBikramSambatDate(date = new Date()) {
-  // Approximate standard BS difference (+56 years, 8 months, 15 days roughly)
-  // Reference: 2021-08-30 was Bhadra 14, 2078
-  const refAD = new Date(2021, 7, 30); // 30 Aug 2021
-  const refBSYear = 2078;
-  const refBSMonth = 4; // Bhadra (0-indexed: Baisakh=0, Jestha=1, Ashadh=2, Shrawan=3, Bhadra=4)
-  const refBSDay = 14;
-
-  const diffTime = date.getTime() - refAD.getTime();
-  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-
-  // Approximate calculation
-  let totalDays = refBSDay + diffDays;
-  let year = refBSYear;
-  let month = refBSMonth;
-
-  while (totalDays > 30) {
-    totalDays -= 30; // standard month avg
-    month++;
-    if (month >= 12) {
-      month = 0;
-      year++;
-    }
-  }
-
-  while (totalDays <= 0) {
-    totalDays += 30;
-    month--;
-    if (month < 0) {
-      month = 11;
-      year--;
-    }
-  }
+  const bsDate = NepaliDate.fromAD(date);
+  const year = bsDate.getYear();
+  const month = bsDate.getMonth();
+  const day = bsDate.getDate();
 
   return {
     year,
-    monthName: nepaliMonths[month] || 'Bhadra',
-    day: Math.max(1, totalDays),
-    formatted: `${nepaliMonths[month]?.toUpperCase() || 'BHADRA'} ${Math.max(1, totalDays)}, ${year}`,
+    month,
+    day,
+    monthName: bsDate.format('MMMM'),
+    formatted: bsDate.format('DD MMMM YYYY'),
+    numeric: bsDate.format('YYYY/MM/DD'),
   };
 }
 
+export function formatSystemDate(value, options = {}) {
+  if (!value) return '-';
+
+  const date = value instanceof Date
+    ? value
+    : /^\d{4}-\d{2}-\d{2}$/.test(String(value))
+      ? new Date(`${value}T12:00:00`)
+      : new Date(value);
+  if (Number.isNaN(date.getTime())) return '-';
+
+  if (localStorage.getItem('mediking_date_system') === 'BS') {
+    const bsDate = NepaliDate.fromAD(date);
+    return options.weekday
+      ? bsDate.format('ddd, DD MMMM YYYY')
+      : bsDate.format('DD MMMM YYYY');
+  }
+
+  return date.toLocaleDateString('en-GB', options);
+}
+
+export function toAdDateString(value) {
+  if (!value) return '';
+  const date = value instanceof Date ? value : new Date(value);
+  if (Number.isNaN(date.getTime())) return '';
+  const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+  return localDate.toISOString().slice(0, 10);
+}
+
+export function toBsDateString(adDate) {
+  if (!adDate) return '';
+  const date = new Date(`${String(adDate).slice(0, 10)}T12:00:00`);
+  if (Number.isNaN(date.getTime())) return '';
+  return NepaliDate.fromAD(date).format('YYYY/MM/DD');
+}
+
+export function toAdDateFromBs(bsDate) {
+  const match = /^(\d{4})\/(\d{2})\/(\d{2})$/.exec(bsDate);
+  if (!match) return null;
+
+  try {
+    const nepaliDate = new NepaliDate(bsDate);
+    if (nepaliDate.format('YYYY/MM/DD') !== bsDate) return null;
+    return toAdDateString(nepaliDate.toJsDate());
+  } catch {
+    return null;
+  }
+}

@@ -96,13 +96,13 @@ export default function UserwiseCashSummaryModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 select-none font-sans">
       {/* Exact MediPro Window styling matching Image 4 */}
-      <div className="w-[1100px] max-w-[98vw] max-h-[96vh] bg-[#ece9d8] border-2 border-slate-600 shadow-2xl flex flex-col text-xs text-slate-800 overflow-hidden relative">
+      <div className="w-[1100px] max-w-[98vw] max-h-[96vh] bg-[#f1f5f9] border-2 border-slate-600 shadow-2xl flex flex-col text-xs text-slate-800 overflow-hidden relative">
         {/* Title Bar */}
-        <div className="bg-[#2b4c7e] text-white px-2 py-1 flex items-center justify-between font-bold text-xs">
+        <div className="bg-[#0f766e] text-white px-2 py-1 flex items-center justify-between font-bold text-xs">
           <span>Userwise Cash Summary</span>
           <button
             onClick={onClose}
-            className="w-4 h-4 bg-[#ece9d8] text-slate-900 hover:bg-rose-600 hover:text-white flex items-center justify-center font-bold text-xs rounded-xs border border-slate-600 shadow-xs"
+            className="w-4 h-4 bg-[#f1f5f9] text-slate-900 hover:bg-rose-600 hover:text-white flex items-center justify-center font-bold text-xs rounded-xs border border-slate-600 shadow-xs"
           >
             ×
           </button>
@@ -130,7 +130,7 @@ export default function UserwiseCashSummaryModal({
         </div>
 
         {/* Filter Toolbar (Image 4) */}
-        <div className="p-2 bg-[#ece9d8] border-b border-slate-300 flex items-center gap-2 flex-wrap text-[11px]">
+        <div className="p-2 bg-[#f1f5f9] border-b border-slate-300 flex items-center gap-2 flex-wrap text-[11px]">
           {/* Date Range Button that triggers the Popup */}
           <button
             type="button"
@@ -178,7 +178,7 @@ export default function UserwiseCashSummaryModal({
         {/* Data Table matching Image 4 */}
         <div className="flex-1 bg-white overflow-auto border-t border-slate-300">
           <table className="w-full text-left text-xs font-sans border-collapse">
-            <thead className="bg-[#e4e1d1] sticky top-0 border-b border-slate-400 text-slate-900 select-none z-10 text-[11px]">
+            <thead className="bg-[#e2e8f0] sticky top-0 border-b border-slate-400 text-slate-900 select-none z-10 text-[11px]">
               <tr>
                 <th className="p-1 px-1.5 border-r border-slate-300 text-center w-8">Id</th>
                 <th className="p-1 px-2 border-r border-slate-300 font-semibold w-28">UserName</th>
@@ -208,7 +208,7 @@ export default function UserwiseCashSummaryModal({
                     key={row.id}
                     onClick={() => setSelectedRow(idx)}
                     className={`cursor-pointer transition-colors border-b border-slate-100 ${
-                      isSelected ? 'bg-[#316ac5] text-white' : idx % 2 === 0 ? 'bg-white' : 'bg-[#fafafa]'
+                      isSelected ? 'bg-[#0f766e] text-white' : idx % 2 === 0 ? 'bg-white' : 'bg-[#fafafa]'
                     }`}
                   >
                     <td className="p-1 px-1.5 border-r border-slate-200 text-center font-mono">
@@ -261,7 +261,7 @@ export default function UserwiseCashSummaryModal({
         </div>
 
         {/* Footer info bar */}
-        <div className="bg-[#ece9d8] border-t border-slate-300 px-3 py-1 text-[11px] text-slate-700 flex items-center justify-between">
+        <div className="bg-[#f1f5f9] border-t border-slate-300 px-3 py-1 text-[11px] text-slate-700 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <span>
               Total Cash Collected:{' '}
@@ -284,13 +284,13 @@ export default function UserwiseCashSummaryModal({
         {/* ------------------------------------------------------------------ */}
         {dateRangePopupOpen && (
           <div className="absolute inset-0 bg-black/25 flex items-center justify-center z-40">
-            <div className="w-[280px] bg-[#ece9d8] border-2 border-slate-600 shadow-2xl flex flex-col text-xs text-slate-800">
+            <div className="w-[280px] bg-[#f1f5f9] border-2 border-slate-600 shadow-2xl flex flex-col text-xs text-slate-800">
               {/* Title */}
-              <div className="bg-[#2b4c7e] text-white px-2 py-1 flex items-center justify-between font-bold text-xs">
+              <div className="bg-[#0f766e] text-white px-2 py-1 flex items-center justify-between font-bold text-xs">
                 <span>Date Range</span>
                 <button
                   onClick={() => setDateRangePopupOpen(false)}
-                  className="w-4 h-4 bg-[#ece9d8] text-slate-900 hover:bg-rose-600 hover:text-white flex items-center justify-center font-bold text-xs rounded-xs border border-slate-600 shadow-xs"
+                  className="w-4 h-4 bg-[#f1f5f9] text-slate-900 hover:bg-rose-600 hover:text-white flex items-center justify-center font-bold text-xs rounded-xs border border-slate-600 shadow-xs"
                 >
                   ×
                 </button>
@@ -302,7 +302,7 @@ export default function UserwiseCashSummaryModal({
               </div>
 
               {/* Popup Fields */}
-              <div className="p-3 bg-[#ece9d8] space-y-2 text-[11px]">
+              <div className="p-3 bg-[#f1f5f9] space-y-2 text-[11px]">
                 <div className="flex items-center justify-between">
                   <span className="font-semibold text-slate-700">Date Type</span>
                   <select

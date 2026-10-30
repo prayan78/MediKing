@@ -7,11 +7,12 @@ const {
   updateCompany,
 } = require('../controllers/companyController');
 const { protect } = require('../middleware/auth');
+const { authorize } = require('../middleware/role');
 
-router.get('/', protect, getCompanies);
-router.get('/:id', protect, getCompanyById);
-router.post('/', protect, createCompany);
-router.put('/:id', protect, updateCompany);
+router.use(protect, authorize('super_admin', 'hospital_admin', 'pharmacist', 'inventory_manager', 'accountant'));
+router.get('/', getCompanies);
+router.get('/:id', getCompanyById);
+router.post('/', createCompany);
+router.put('/:id', updateCompany);
 
 module.exports = router;
-

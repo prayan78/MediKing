@@ -183,16 +183,16 @@ export default function CashSalesModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 select-none font-sans">
       {/* Exact MediPro Window styling matching Image 2 */}
-      <div className="w-[1150px] max-w-[98vw] max-h-[96vh] bg-[#ece9d8] border-2 border-slate-600 shadow-2xl flex flex-col text-xs text-slate-800 overflow-hidden">
+      <div className="w-[1150px] max-w-[98vw] max-h-[96vh] bg-[#f1f5f9] border-2 border-slate-600 shadow-2xl flex flex-col text-xs text-slate-800 overflow-hidden">
         {/* Title Bar */}
-        <div className="bg-[#2b4c7e] text-white px-2 py-1 flex items-center justify-between font-bold text-xs">
+        <div className="bg-[#0f766e] text-white px-2 py-1 flex items-center justify-between font-bold text-xs">
           <div className="flex items-center gap-1.5">
             <span className="text-yellow-300">💻</span>
             <span>{isReturn ? 'CASH SALES RETURN' : 'CASH SALES'}</span>
           </div>
           <button
             onClick={onClose}
-            className="w-4 h-4 bg-[#ece9d8] text-slate-900 hover:bg-rose-600 hover:text-white flex items-center justify-center font-bold text-xs rounded-xs border border-slate-600 shadow-xs"
+            className="w-4 h-4 bg-[#f1f5f9] text-slate-900 hover:bg-rose-600 hover:text-white flex items-center justify-center font-bold text-xs rounded-xs border border-slate-600 shadow-xs"
           >
             ×
           </button>
@@ -211,7 +211,7 @@ export default function CashSalesModal({
         </div>
 
         {/* Upper Filter & Details Section (Image 2) */}
-        <div className="p-2.5 bg-[#ece9d8] border-b border-slate-300 space-y-1.5 text-[11px]">
+        <div className="p-2.5 bg-[#f1f5f9] border-b border-slate-300 space-y-1.5 text-[11px]">
           {/* Row 1: Patient Type, Pay Mode, Member, Date */}
           <div className="flex items-center justify-between gap-3 flex-wrap">
             <div className="flex items-center gap-3">
@@ -502,7 +502,7 @@ export default function CashSalesModal({
           <button
             type="button"
             onClick={handleAddItem}
-            className="ml-1 px-3 py-1 bg-[#316ac5] text-white hover:bg-blue-700 font-bold text-xs rounded-xs"
+            className="ml-1 px-3 py-1 bg-[#0f766e] text-white hover:bg-blue-700 font-bold text-xs rounded-xs"
             title="Press Enter or click to add item"
           >
             Enter ↵
@@ -552,7 +552,7 @@ export default function CashSalesModal({
                       key={idx}
                       onClick={() => setSelectedRow(idx)}
                       className={`cursor-pointer border-b border-slate-200 transition ${
-                        isSelected ? 'bg-[#316ac5] text-white' : idx % 2 === 0 ? 'bg-white' : 'bg-[#fcfcfc]'
+                        isSelected ? 'bg-[#0f766e] text-white' : idx % 2 === 0 ? 'bg-white' : 'bg-[#fcfcfc]'
                       }`}
                     >
                       <td className="p-1 px-2 border-r border-slate-200 text-center font-mono">
@@ -592,7 +592,7 @@ export default function CashSalesModal({
         </div>
 
         {/* Lower Stats Strip (Image 2) */}
-        <div className="bg-[#ece9d8] border-t border-slate-300 p-2 flex items-center justify-between text-[11px] text-slate-800 font-sans">
+        <div className="bg-[#f1f5f9] border-t border-slate-300 p-2 flex items-center justify-between text-[11px] text-slate-800 font-sans">
           <div className="flex items-center gap-6">
             <div className="space-y-0.5">
               <div>

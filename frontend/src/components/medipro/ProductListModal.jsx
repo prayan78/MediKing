@@ -121,7 +121,7 @@ export default function ProductListModal({ isOpen, onClose }) {
     <>
       <div className="fixed inset-0 z-45 flex items-center justify-center bg-black/50 backdrop-blur-[1px] p-2 overflow-y-auto">
         {/* MediPro classic Windows form styling */}
-        <div className="w-full max-w-6xl bg-[#ece9d8] border-2 border-slate-500 shadow-2xl rounded-xs overflow-hidden text-slate-900 font-sans text-xs my-2 flex flex-col h-[90vh] max-h-[850px]">
+        <div className="w-full max-w-6xl bg-[#f1f5f9] border-2 border-slate-500 shadow-2xl rounded-xs overflow-hidden text-slate-900 font-sans text-xs my-2 flex flex-col h-[90vh] max-h-[850px]">
           {/* Title Bar */}
           <div className="bg-gradient-to-r from-[#0a246a] to-[#a6caf0] text-white px-2 py-1 flex items-center justify-between font-bold select-none shrink-0">
             <span className="text-[11px] tracking-wide">
@@ -129,7 +129,7 @@ export default function ProductListModal({ isOpen, onClose }) {
             </span>
             <button
               onClick={closeModal}
-              className="w-4 h-4 bg-[#ece9d8] text-slate-900 hover:bg-rose-600 hover:text-white flex items-center justify-center font-bold text-xs rounded-xs border border-slate-600 shadow-xs"
+              className="w-4 h-4 bg-[#f1f5f9] text-slate-900 hover:bg-rose-600 hover:text-white flex items-center justify-center font-bold text-xs rounded-xs border border-slate-600 shadow-xs"
             >
               ×
             </button>
@@ -147,7 +147,7 @@ export default function ProductListModal({ isOpen, onClose }) {
           </div>
 
           {/* Filter & Record Navigation Toolbar */}
-          <div className="p-2 bg-[#ece9d8] border-b border-slate-300 flex flex-wrap items-center justify-between gap-2 shrink-0">
+          <div className="p-2 bg-[#f1f5f9] border-b border-slate-300 flex flex-wrap items-center justify-between gap-2 shrink-0">
             {/* Record Navigators: |<  <  >  >| */}
             <div className="flex items-center gap-1 bg-white border border-slate-400 p-0.5 rounded-xs">
               <button
@@ -231,7 +231,7 @@ export default function ProductListModal({ isOpen, onClose }) {
           {/* Table Container (MediPro High Density Grid) */}
           <div className="flex-1 overflow-auto bg-white border border-slate-400 m-2">
             <table className="w-full text-left border-collapse text-xs select-none">
-              <thead className="sticky top-0 bg-[#ece9d8] border-b border-slate-400 z-10">
+              <thead className="sticky top-0 bg-[#f1f5f9] border-b border-slate-400 z-10">
                 <tr className="text-slate-800 text-[11px] font-semibold divide-x divide-slate-300">
                   <th className="py-1 px-2 w-8 text-center"></th>
                   <th className="py-1 px-2 w-20">Md Code</th>
@@ -274,7 +274,7 @@ export default function ProductListModal({ isOpen, onClose }) {
                         onDoubleClick={handleOpenEdit}
                         className={`cursor-pointer divide-x divide-slate-100 ${
                           isSelected
-                            ? 'bg-[#316ac5] text-white font-semibold'
+                            ? 'bg-[#0f766e] text-white font-semibold'
                             : idx % 2 === 0
                             ? 'bg-white hover:bg-blue-50 text-slate-900'
                             : 'bg-[#fbfbf9] hover:bg-blue-50 text-slate-900'
@@ -316,40 +316,40 @@ export default function ProductListModal({ isOpen, onClose }) {
           </div>
 
           {/* Action Button Bar (Exact layout from Image 4) */}
-          <div className="p-2 bg-[#ece9d8] border-t border-slate-300 flex flex-wrap items-center justify-between gap-2 shrink-0">
+          <div className="p-2 bg-[#f1f5f9] border-t border-slate-300 flex flex-wrap items-center justify-between gap-2 shrink-0">
             <div className="flex items-center gap-2">
               <button
                 type="button"
                 onClick={() => fetchProducts()}
-                className="px-6 py-1 bg-[#ece9d8] hover:bg-[#dfdbcd] border border-slate-600 shadow-xs text-xs font-bold text-slate-900 active:translate-y-0.5 transition"
+                className="px-6 py-1 bg-[#f1f5f9] hover:bg-[#e2e8f0] border border-slate-600 shadow-xs text-xs font-bold text-slate-900 active:translate-y-0.5 transition"
               >
                 List
               </button>
               <button
                 type="button"
                 onClick={handleOpenAdd}
-                className="px-6 py-1 bg-[#ece9d8] hover:bg-[#dfdbcd] border border-slate-600 shadow-xs text-xs font-bold text-slate-900 active:translate-y-0.5 transition"
+                className="px-6 py-1 bg-[#f1f5f9] hover:bg-[#e2e8f0] border border-slate-600 shadow-xs text-xs font-bold text-slate-900 active:translate-y-0.5 transition"
               >
                 Add
               </button>
               <button
                 type="button"
                 onClick={handleOpenEdit}
-                className="px-6 py-1 bg-[#ece9d8] hover:bg-[#dfdbcd] border border-slate-600 shadow-xs text-xs font-bold text-slate-900 active:translate-y-0.5 transition"
+                className="px-6 py-1 bg-[#f1f5f9] hover:bg-[#e2e8f0] border border-slate-600 shadow-xs text-xs font-bold text-slate-900 active:translate-y-0.5 transition"
               >
                 Edit
               </button>
               <button
                 type="button"
                 onClick={handleToggleStatus}
-                className="px-5 py-1 bg-[#ece9d8] hover:bg-[#dfdbcd] border border-slate-600 shadow-xs text-xs font-bold text-slate-900 active:translate-y-0.5 transition"
+                className="px-5 py-1 bg-[#f1f5f9] hover:bg-[#e2e8f0] border border-slate-600 shadow-xs text-xs font-bold text-slate-900 active:translate-y-0.5 transition"
               >
                 Active / Inactive
               </button>
               <button
                 type="button"
                 onClick={closeModal}
-                className="px-6 py-1 bg-[#ece9d8] hover:bg-[#dfdbcd] border border-slate-600 shadow-xs text-xs font-bold text-slate-900 active:translate-y-0.5 transition"
+                className="px-6 py-1 bg-[#f1f5f9] hover:bg-[#e2e8f0] border border-slate-600 shadow-xs text-xs font-bold text-slate-900 active:translate-y-0.5 transition"
               >
                 Close
               </button>
@@ -359,14 +359,14 @@ export default function ProductListModal({ isOpen, onClose }) {
               <button
                 type="button"
                 onClick={handleOpenEdit}
-                className="px-8 py-1 bg-[#ece9d8] hover:bg-[#dfdbcd] border border-slate-600 shadow-xs text-xs font-bold text-slate-900 active:translate-y-0.5 transition"
+                className="px-8 py-1 bg-[#f1f5f9] hover:bg-[#e2e8f0] border border-slate-600 shadow-xs text-xs font-bold text-slate-900 active:translate-y-0.5 transition"
               >
                 Select
               </button>
               <button
                 type="button"
                 onClick={closeModal}
-                className="px-8 py-1 bg-[#ece9d8] hover:bg-[#dfdbcd] border border-slate-600 shadow-xs text-xs font-bold text-slate-900 active:translate-y-0.5 transition"
+                className="px-8 py-1 bg-[#f1f5f9] hover:bg-[#e2e8f0] border border-slate-600 shadow-xs text-xs font-bold text-slate-900 active:translate-y-0.5 transition"
               >
                 Close
               </button>

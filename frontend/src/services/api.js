@@ -27,7 +27,7 @@ api.interceptors.response.use(
   (error) => {
     if (error.response && error.response.status === 401) {
       // Clear token if expired or invalid
-      if (!window.location.pathname.includes('/login')) {
+      if (!/^\/(login|signup|forgot-password|reset-password)(\/|$)/.test(window.location.pathname)) {
         localStorage.removeItem('mediking_token');
         localStorage.removeItem('mediking_user');
         window.location.href = '/login';
@@ -38,4 +38,3 @@ api.interceptors.response.use(
 );
 
 export default api;
-

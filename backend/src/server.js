@@ -50,6 +50,7 @@ app.get('/api/health', (req, res) => {
 
 // Mount Routes
 app.use('/api/auth', authLimiter, require('./routes/authRoutes'));
+app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/dashboard', require('./routes/dashboardRoutes'));
 app.use('/api/branches', require('./routes/branchRoutes'));
 app.use('/api/settings', require('./routes/settingsRoutes'));

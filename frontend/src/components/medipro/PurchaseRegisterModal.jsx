@@ -44,13 +44,13 @@ export default function PurchaseRegisterModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 select-none font-sans">
       {/* Exact MediPro Window styling matching Image 4 */}
-      <div className="w-[580px] max-w-[95vw] bg-[#ece9d8] border-2 border-slate-600 shadow-2xl flex flex-col text-xs text-slate-800">
+      <div className="w-[580px] max-w-[95vw] bg-[#f1f5f9] border-2 border-slate-600 shadow-2xl flex flex-col text-xs text-slate-800">
         {/* Title Bar */}
-        <div className="bg-[#2b4c7e] text-white px-2 py-1 flex items-center justify-between font-bold text-xs">
+        <div className="bg-[#0f766e] text-white px-2 py-1 flex items-center justify-between font-bold text-xs">
           <span>Purchase / Return / Adjust Register</span>
           <button
             onClick={onClose}
-            className="w-4 h-4 bg-[#ece9d8] text-slate-900 hover:bg-rose-600 hover:text-white flex items-center justify-center font-bold text-xs rounded-xs border border-slate-600 shadow-xs"
+            className="w-4 h-4 bg-[#f1f5f9] text-slate-900 hover:bg-rose-600 hover:text-white flex items-center justify-center font-bold text-xs rounded-xs border border-slate-600 shadow-xs"
           >
             ×
           </button>
@@ -62,15 +62,15 @@ export default function PurchaseRegisterModal({
         </div>
 
         {/* Tabs: Purchase, Purchase Return, Adjustment */}
-        <div className="flex border-b border-slate-400 bg-[#dfdbcd] px-2 pt-1 gap-1">
+        <div className="flex border-b border-slate-400 bg-[#e2e8f0] px-2 pt-1 gap-1">
           {['Purchase', 'Purchase Return', 'Adjustment'].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
               className={`px-3 py-1 text-xs font-semibold rounded-t-xs border-t border-l border-r ${
                 activeTab === tab
-                  ? 'bg-[#ece9d8] border-slate-500 text-slate-900 -mb-px'
-                  : 'bg-[#cfcbbe] border-slate-400 text-slate-700 hover:bg-[#e4e0d4]'
+                  ? 'bg-[#f1f5f9] border-slate-500 text-slate-900 -mb-px'
+                  : 'bg-[#f1f5f9] border-slate-400 text-slate-700 hover:bg-[#e4e0d4]'
               }`}
             >
               {tab}
@@ -79,7 +79,7 @@ export default function PurchaseRegisterModal({
         </div>
 
         {/* Body Area with Options and Floating Date Range (Image 4) */}
-        <div className="p-3 bg-[#ece9d8] relative min-h-[340px]">
+        <div className="p-3 bg-[#f1f5f9] relative min-h-[340px]">
           {/* Radio Options List */}
           <div className="space-y-1.5 text-[11px] text-slate-800 w-2/3">
             {reportOptions.map((opt) => (
@@ -102,9 +102,9 @@ export default function PurchaseRegisterModal({
           </div>
 
           {/* Floating Date Range Dialog (Exact replica of Image 4) */}
-          <div className="absolute right-3 top-4 w-52 bg-[#ece9d8] border-2 border-slate-600 shadow-xl text-xs">
+          <div className="absolute right-3 top-4 w-52 bg-[#f1f5f9] border-2 border-slate-600 shadow-xl text-xs">
             {/* Title Bar */}
-            <div className="bg-[#2b4c7e] text-white px-2 py-0.5 font-bold text-[11px]">
+            <div className="bg-[#0f766e] text-white px-2 py-0.5 font-bold text-[11px]">
               Date Range
             </div>
             <div className="bg-[#f0f0f0] border-b border-slate-300 px-2 py-0.5 text-[10px] text-slate-600">
@@ -170,7 +170,7 @@ export default function PurchaseRegisterModal({
         </div>
 
         {/* Bottom Actions matching Image 4 */}
-        <div className="bg-[#ece9d8] border-t border-slate-300 p-2 flex items-center justify-center gap-4">
+        <div className="bg-[#f1f5f9] border-t border-slate-300 p-2 flex items-center justify-center gap-4">
           <button
             onClick={handleGenerateReport}
             className="w-28 py-1 bg-gradient-to-b from-[#f9f9f9] to-[#dcdcdc] hover:from-white hover:to-[#cecece] border border-slate-500 font-bold text-slate-800 rounded-xs shadow-xs text-xs"

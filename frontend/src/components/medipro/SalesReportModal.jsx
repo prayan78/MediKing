@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import api from '../../services/api';
 import { getBikramSambatDate } from '../../utils/nepaliDate';
+import { useAuth } from '../../context/AuthContext';
 
 const REPORT_OPTIONS = [
   { id: 'sales_register', label: 'Sales Register', supported: true },
@@ -32,10 +33,10 @@ const REPORT_OPTIONS = [
 ];
 
 const formatBsDate = (date) => {
-  const bs = getBikramSambatDate(date);
-  return `${bs.year}/${String(bs.month + 1).padStart(2, '0')}/${String(bs.day).padStart(2, '0')}`;
+  return getBikramSambatDate(date).numeric;
 };
 
+const localDateString = (date) => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 const compareDates = (left, right) => left.localeCompare(right);
 const amount = (value) => (Number(value) || 0).toLocaleString('en-IN', {
   minimumFractionDigits: 2,
@@ -43,20 +44,30 @@ const amount = (value) => (Number(value) || 0).toLocaleString('en-IN', {
 });
 
 export default function SalesReportModal({ isOpen, onClose }) {
+  const { dateSystem } = useAuth();
   const [selectedReport, setSelectedReport] = useState('sales_summary');
   const [activeTab, setActiveTab] = useState('Sales');
   const [dateRangeOpen, setDateRangeOpen] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
-  const [dateType, setDateType] = useState('BS');
+  const [dateType, setDateType] = useState(dateSystem);
   const [byDateMonth, setByDateMonth] = useState('Date');
-  const [fromDate, setFromDate] = useState(() => formatBsDate(new Date()));
-  const [toDate, setToDate] = useState(() => formatBsDate(new Date()));
+  const [fromDate, setFromDate] = useState(() => dateSystem === 'BS' ? formatBsDate(new Date()) : localDateString(new Date()));
+  const [toDate, setToDate] = useState(() => dateSystem === 'BS' ? formatBsDate(new Date()) : localDateString(new Date()));
   const [draftFromDate, setDraftFromDate] = useState(fromDate);
   const [draftToDate, setDraftToDate] = useState(toDate);
   const [functionType, setFunctionType] = useState('Cash');
   const [sales, setSales] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    const today = dateSystem === 'BS' ? formatBsDate(new Date()) : localDateString(new Date());
+    setDateType(dateSystem);
+    setFromDate(today);
+    setToDate(today);
+    setDraftFromDate(today);
+    setDraftToDate(today);
+  }, [dateSystem]);
 
   useEffect(() => {
     if (!isOpen || !reportOpen) return undefined;
@@ -101,7 +112,7 @@ export default function SalesReportModal({ isOpen, onClose }) {
     if (Number.isNaN(saleDate.getTime())) return false;
     const formattedDate = dateType === 'BS'
       ? formatBsDate(saleDate)
-      : saleDate.toISOString().slice(0, 10);
+      : localDateString(saleDate);
     const start = byDateMonth === 'Month' ? fromDate.slice(0, 7) : fromDate;
     const end = byDateMonth === 'Month' ? toDate.slice(0, 7) : toDate;
     const selected = byDateMonth === 'Month' ? formattedDate.slice(0, 7) : formattedDate;
@@ -147,7 +158,7 @@ export default function SalesReportModal({ isOpen, onClose }) {
   const changeDateType = (value) => {
     setDateType(value);
     if (value === 'AD') {
-      const today = new Date().toISOString().slice(0, 10);
+      const today = localDateString(new Date());
       setFromDate(today);
       setToDate(today);
       setDraftFromDate(today);
@@ -170,13 +181,13 @@ export default function SalesReportModal({ isOpen, onClose }) {
     <>
       {!reportOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 select-none font-sans">
-          <div className="relative flex max-h-[90vh] w-[390px] max-w-[95vw] flex-col border-2 border-slate-600 bg-[#ece9d8] text-xs text-slate-800 shadow-2xl">
-            <div className="flex items-center justify-between bg-[#2b4c7e] px-2 py-1 font-bold text-white">
+          <div className="relative flex max-h-[90vh] w-[390px] max-w-[95vw] flex-col border-2 border-slate-600 bg-[#f1f5f9] text-xs text-slate-800 shadow-2xl">
+            <div className="flex items-center justify-between bg-[#0f766e] px-2 py-1 font-bold text-white">
               <span>Sales / Sales-Return Register</span>
-              <button onClick={onClose} aria-label="Close" className="border border-slate-600 bg-[#ece9d8] px-1 font-bold text-slate-900 hover:bg-rose-600 hover:text-white">×</button>
+              <button onClick={onClose} aria-label="Close" className="border border-slate-600 bg-[#f1f5f9] px-1 font-bold text-slate-900 hover:bg-rose-600 hover:text-white">×</button>
             </div>
             <div className="border-b border-slate-300 bg-[#f0f0f0] px-2 py-1 text-[11px]">Function</div>
-            <div className="flex gap-3 border-b border-slate-400 bg-[#dfdbcd] px-3 py-1">
+            <div className="flex gap-3 border-b border-slate-400 bg-[#e2e8f0] px-3 py-1">
               {['Cash', 'Credit', 'Super', 'Issue', '(CP)'].map((type) => (
                 <label key={type} className="flex cursor-pointer items-center gap-1">
                   <input type="radio" name="sales-function" checked={functionType === type} onChange={() => setFunctionType(type)} />
@@ -184,9 +195,9 @@ export default function SalesReportModal({ isOpen, onClose }) {
                 </label>
               ))}
             </div>
-            <div className="flex border-b border-slate-400 bg-[#dfdbcd] px-2 pt-1">
+            <div className="flex border-b border-slate-400 bg-[#e2e8f0] px-2 pt-1">
               {['Sales', 'Sales Return'].map((tab) => (
-                <button key={tab} onClick={() => setActiveTab(tab)} className={`border-x border-t border-slate-500 px-3 py-1 ${activeTab === tab ? 'bg-[#ece9d8] font-bold' : 'bg-[#cfcbbe]'}`}>
+                <button key={tab} onClick={() => setActiveTab(tab)} className={`border-x border-t border-slate-500 px-3 py-1 ${activeTab === tab ? 'bg-[#f1f5f9] font-bold' : 'bg-[#f1f5f9]'}`}>
                   {tab}
                 </button>
               ))}
@@ -219,8 +230,8 @@ export default function SalesReportModal({ isOpen, onClose }) {
             </div>
 
             {dateRangeOpen && (
-              <div className="absolute left-1/2 top-1/2 z-10 w-56 -translate-x-1/2 -translate-y-1/2 border-2 border-slate-600 bg-[#ece9d8] text-xs shadow-xl">
-                <div className="bg-[#2b4c7e] px-2 py-1 font-bold text-white">Date Range</div>
+              <div className="absolute left-1/2 top-1/2 z-10 w-56 -translate-x-1/2 -translate-y-1/2 border-2 border-slate-600 bg-[#f1f5f9] text-xs shadow-xl">
+                <div className="bg-[#0f766e] px-2 py-1 font-bold text-white">Date Range</div>
                 <div className="border-b border-slate-300 bg-[#f0f0f0] px-2 py-0.5 text-[10px]">Function</div>
                 <div className="space-y-1.5 p-2">
                   <label className="flex items-center justify-between gap-2"><span className="font-semibold">Date Type</span>
@@ -249,12 +260,12 @@ export default function SalesReportModal({ isOpen, onClose }) {
 
       {reportOpen && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 select-none font-sans">
-          <section className="flex max-h-[96vh] w-[1180px] max-w-[98vw] flex-col overflow-hidden border-2 border-slate-600 bg-[#ece9d8] text-xs text-slate-800 shadow-2xl">
-            <header className="flex items-center justify-between bg-[#2b4c7e] px-2 py-1 font-bold text-white">
+          <section className="flex max-h-[96vh] w-[1180px] max-w-[98vw] flex-col overflow-hidden border-2 border-slate-600 bg-[#f1f5f9] text-xs text-slate-800 shadow-2xl">
+            <header className="flex items-center justify-between bg-[#0f766e] px-2 py-1 font-bold text-white">
               <span>{activeTab === 'Sales Return'
                 ? selectedReport === 'sales_summary' ? 'Sales Return Summary' : 'Sales Return Register'
                 : selectedReport === 'sales_summary' ? 'Sales Summary' : 'Cash Sales Book'}</span>
-              <button onClick={dismissReport} aria-label="Close report" className="border border-slate-600 bg-[#ece9d8] px-1 font-bold text-slate-900 hover:bg-rose-600 hover:text-white">×</button>
+              <button onClick={dismissReport} aria-label="Close report" className="border border-slate-600 bg-[#f1f5f9] px-1 font-bold text-slate-900 hover:bg-rose-600 hover:text-white">×</button>
             </header>
             <div className="flex items-center gap-3 border-b border-slate-300 bg-[#f0f0f0] px-2 py-1 text-[11px]">
               <button onClick={() => window.print()} className="font-semibold underline">Report</button>
@@ -266,8 +277,8 @@ export default function SalesReportModal({ isOpen, onClose }) {
               <span>From: {fromDate}</span><span>To: {toDate}</span>
             </div>
             {dateRangeOpen && (
-              <div className="absolute left-1/2 top-1/2 z-[70] w-56 -translate-x-1/2 -translate-y-1/2 border-2 border-slate-600 bg-[#ece9d8] shadow-xl">
-                <div className="bg-[#2b4c7e] px-2 py-1 font-bold text-white">Date Range</div>
+              <div className="absolute left-1/2 top-1/2 z-[70] w-56 -translate-x-1/2 -translate-y-1/2 border-2 border-slate-600 bg-[#f1f5f9] shadow-xl">
+                <div className="bg-[#0f766e] px-2 py-1 font-bold text-white">Date Range</div>
                 <div className="space-y-2 p-2">
                   <label className="flex items-center justify-between">Date Type
                     <select value={dateType} onChange={(event) => changeDateType(event.target.value)} className="border border-slate-400 bg-white"><option value="BS">BS</option><option value="AD">AD</option></select>
@@ -284,7 +295,7 @@ export default function SalesReportModal({ isOpen, onClose }) {
                   <h2 className="text-center text-lg font-semibold">{activeTab === 'Sales Return' ? 'Sales Return Summary' : 'Sales Summary'}</h2>
                   <p className="mb-3 text-center">From: {fromDate} To: {toDate}</p>
                   <table className="w-full border-collapse text-left">
-                    <thead><tr className="border-y border-slate-500 bg-[#ece9d8]">
+                    <thead><tr className="border-y border-slate-500 bg-[#f1f5f9]">
                       {['Type', 'Sales', 'Discount', 'Net Sales', 'Return', 'Return Dis', 'Net Return', 'Credit Note', 'Debit Note', 'Total'].map((heading) => <th key={heading} className="p-1 text-right first:text-left">{heading}</th>)}
                     </tr></thead>
                     <tbody>
@@ -318,18 +329,18 @@ export default function SalesReportModal({ isOpen, onClose }) {
               ) : (
                 <div className="flex-1 overflow-auto bg-white">
                   <table className="w-full border-collapse text-left text-[11px]">
-                    <thead className="sticky top-0 bg-[#ece9d8]"><tr className="border-b border-slate-500">
+                    <thead className="sticky top-0 bg-[#f1f5f9]"><tr className="border-b border-slate-500">
                       {['Date', 'Inv No', 'Name', 'Amount', 'Discount', 'Vat', 'Vat Free', 'Net', 'Cash', 'Card', 'Copay', 'Username', 'Add'].map((heading) => <th key={heading} className="p-1 text-right first:text-left">{heading}</th>)}
                     </tr></thead>
                     <tbody>
                       {filteredSales.map((sale) => <tr key={sale._id} className="border-b border-slate-100 even:bg-slate-50">
-                        <td className="p-1">{dateType === 'BS' ? formatBsDate(new Date(sale.saleDate)) : new Date(sale.saleDate).toISOString().slice(0, 10)}</td>
+                        <td className="p-1">{dateType === 'BS' ? formatBsDate(new Date(sale.saleDate)) : localDateString(new Date(sale.saleDate))}</td>
                         <td className="p-1">{sale.invoiceNumber}</td><td className="p-1">{sale.customerName || sale.patient?.fullName || 'Cash Customer'}</td>
                         <td className="p-1 text-right">{amount(sale.totalAmount)}</td><td className="p-1 text-right">{amount(sale.discountAmount)}</td><td className="p-1 text-right">{amount(sale.taxAmount)}</td><td className="p-1 text-right">0.00</td><td className="p-1 text-right">{amount(sale.netAmount)}</td>
                         <td className="p-1 text-right">{sale.paymentMethod === 'cash' ? amount(sale.paidAmount || sale.netAmount) : '0.00'}</td><td className="p-1 text-right">{sale.paymentMethod === 'bank_card' || sale.paymentMethod === 'fonepay_qr' ? amount(sale.paidAmount || sale.netAmount) : '0.00'}</td><td className="p-1 text-right">0.00</td><td className="p-1">{sale.dispensedBy?.name || ''}</td><td className="p-1">{sale.items?.length || 0}</td>
                       </tr>)}
                     </tbody>
-                    <tfoot className="sticky bottom-0 bg-[#ece9d8] font-bold"><tr className="border-t border-slate-500"><td colSpan="3" className="p-1 text-right">Total</td><td className="p-1 text-right">{amount(totals.sales)}</td><td className="p-1 text-right">{amount(totals.discount)}</td><td colSpan="2"></td><td className="p-1 text-right">{amount(totals.net)}</td><td className="p-1 text-right">{amount(totals.cash)}</td><td className="p-1 text-right">{amount(totals.card)}</td></tr></tfoot>
+                    <tfoot className="sticky bottom-0 bg-[#f1f5f9] font-bold"><tr className="border-t border-slate-500"><td colSpan="3" className="p-1 text-right">Total</td><td className="p-1 text-right">{amount(totals.sales)}</td><td className="p-1 text-right">{amount(totals.discount)}</td><td colSpan="2"></td><td className="p-1 text-right">{amount(totals.net)}</td><td className="p-1 text-right">{amount(totals.cash)}</td><td className="p-1 text-right">{amount(totals.card)}</td></tr></tfoot>
                   </table>
                   {activeTab === 'Sales Return' && <p className="p-6 text-center text-slate-500">Sales return records are not available in the current sales data.</p>}
                   {activeTab === 'Sales' && !filteredSales.length && <p className="p-6 text-center text-slate-500">No sales found for the selected date range.</p>}

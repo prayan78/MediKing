@@ -34,20 +34,20 @@ export default function StockBalanceModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 select-none font-sans">
       {/* Exact MediPro Window styling matching Image 3 */}
-      <div className="w-[360px] max-w-[95vw] bg-[#ece9d8] border-2 border-slate-600 shadow-2xl flex flex-col text-xs text-slate-800">
+      <div className="w-[360px] max-w-[95vw] bg-[#f1f5f9] border-2 border-slate-600 shadow-2xl flex flex-col text-xs text-slate-800">
         {/* Title Bar */}
-        <div className="bg-[#2b4c7e] text-white px-2 py-1 flex items-center justify-between font-bold text-xs">
+        <div className="bg-[#0f766e] text-white px-2 py-1 flex items-center justify-between font-bold text-xs">
           <span>Stock Balance</span>
           <button
             onClick={onClose}
-            className="w-4 h-4 bg-[#ece9d8] text-slate-900 hover:bg-rose-600 hover:text-white flex items-center justify-center font-bold text-xs rounded-xs border border-slate-600 shadow-xs"
+            className="w-4 h-4 bg-[#f1f5f9] text-slate-900 hover:bg-rose-600 hover:text-white flex items-center justify-center font-bold text-xs rounded-xs border border-slate-600 shadow-xs"
           >
             ×
           </button>
         </div>
 
         {/* Function Section */}
-        <div className="p-3 bg-[#ece9d8] flex flex-col space-y-2">
+        <div className="p-3 bg-[#f1f5f9] flex flex-col space-y-2">
           <div className="text-[11px] font-semibold text-slate-700">Function</div>
 
           {/* Radio Group List */}

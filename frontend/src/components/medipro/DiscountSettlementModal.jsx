@@ -46,13 +46,13 @@ export default function DiscountSettlementModal({
   return (
     <div className="fixed inset-0 z-60 flex items-center justify-center bg-black/50 select-none font-sans">
       {/* Exact MediPro Window styling matching Image 3 */}
-      <div className="w-[820px] max-w-[96vw] bg-[#ece9d8] border-2 border-slate-600 shadow-2xl flex flex-col text-xs text-slate-800">
+      <div className="w-[820px] max-w-[96vw] bg-[#f1f5f9] border-2 border-slate-600 shadow-2xl flex flex-col text-xs text-slate-800">
         {/* Title Bar */}
-        <div className="bg-[#2b4c7e] text-white px-2 py-1 flex items-center justify-between font-bold text-xs">
+        <div className="bg-[#0f766e] text-white px-2 py-1 flex items-center justify-between font-bold text-xs">
           <span>Discount & Settlement</span>
           <button
             onClick={onClose}
-            className="w-4 h-4 bg-[#ece9d8] text-slate-900 hover:bg-rose-600 hover:text-white flex items-center justify-center font-bold text-xs rounded-xs border border-slate-600 shadow-xs"
+            className="w-4 h-4 bg-[#f1f5f9] text-slate-900 hover:bg-rose-600 hover:text-white flex items-center justify-center font-bold text-xs rounded-xs border border-slate-600 shadow-xs"
           >
             ×
           </button>
@@ -66,7 +66,7 @@ export default function DiscountSettlementModal({
         </div>
 
         {/* Body Area matching Image 3 */}
-        <div className="p-4 bg-[#ece9d8] space-y-3 text-[11px]">
+        <div className="p-4 bg-[#f1f5f9] space-y-3 text-[11px]">
           {/* Top Section */}
           <div className="grid grid-cols-12 gap-x-3 gap-y-2 items-center">
             {/* Total */}

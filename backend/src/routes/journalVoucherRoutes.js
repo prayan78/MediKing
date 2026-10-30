@@ -7,8 +7,9 @@ const {
   getStatement,
 } = require('../controllers/journalVoucherController');
 const { protect } = require('../middleware/auth');
+const { authorize } = require('../middleware/role');
 
-router.use(protect);
+router.use(protect, authorize('super_admin', 'hospital_admin', 'accountant'));
 router.get('/next-number', getNextVoucherNumber);
 router.get('/accounts', getAccountHeads);
 router.get('/statement', getStatement);

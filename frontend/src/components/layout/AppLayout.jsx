@@ -37,7 +37,7 @@ export default function AppLayout() {
   // Full screen MediPro Desktop UI without letterbox empty space
   if (viewMode === 'medipro' || viewMode === 'attendance' || viewMode === 'launcher' || viewMode === 'account') {
     return (
-      <div className="h-screen w-screen overflow-hidden bg-[#ece9d8]">
+      <div className="h-screen w-screen overflow-hidden bg-[#f1f5f9]">
         <Outlet
           context={{
             onOpenNewPatient: () => setPatientModalOpen(true),

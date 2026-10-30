@@ -14,7 +14,6 @@ import {
   Settings,
   ChevronLeft,
   ChevronRight,
-  Shield,
   Monitor,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
@@ -38,20 +37,23 @@ export default function Sidebar({ collapsed, setCollapsed }) {
 
   const userRole = user?.role || '';
   const filteredNav = navigationItems.filter(
-    (item) => !item.roles || item.roles.includes(userRole) || userRole === 'super_admin'
+    (item) =>     !item.roles ||
+    item.roles.includes(userRole) ||
+    userRole === 'super_admin' ||
+    item.roles.some((role) => user?.permissions?.includes(role))
   );
 
   return (
     <aside
-      className={`fixed top-0 left-0 z-30 h-screen transition-all duration-300 ease-in-out bg-slate-900 border-r border-slate-800 text-slate-200 flex flex-col ${
+      className={`fixed top-0 left-0 z-30 h-screen transition-all duration-300 ease-in-out bg-[#102a35] border-r border-[#1d3c47] text-slate-200 flex flex-col ${
         collapsed ? 'w-20' : 'w-64'
       }`}
     >
       {/* Brand Header */}
-      <div className="h-16 flex items-center justify-between px-4 border-b border-slate-800 bg-slate-950/60">
+      <div className="h-16 flex items-center justify-between px-4 border-b border-[#1d3c47] bg-[#0c222b]">
         {!collapsed && (
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center font-bold text-slate-950 text-xl shadow-lg shadow-teal-500/20">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-cyan-400 to-teal-300 flex items-center justify-center font-bold text-slate-950 text-xl shadow-lg shadow-teal-500/20">
               MK
             </div>
             <div>
@@ -64,7 +66,7 @@ export default function Sidebar({ collapsed, setCollapsed }) {
         )}
 
         {collapsed && (
-          <div className="mx-auto w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center font-bold text-slate-950 text-xl shadow-lg shadow-teal-500/20">
+          <div className="mx-auto w-9 h-9 rounded-xl bg-gradient-to-tr from-cyan-400 to-teal-300 flex items-center justify-center font-bold text-slate-950 text-xl shadow-lg shadow-teal-500/20">
             MK
           </div>
         )}
@@ -89,8 +91,8 @@ export default function Sidebar({ collapsed, setCollapsed }) {
               className={({ isActive }) =>
                 `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all group relative ${
                   isActive
-                    ? 'bg-gradient-to-r from-teal-600/30 to-emerald-600/20 text-teal-300 border-l-4 border-teal-400 shadow-sm'
-                    : 'text-slate-300 hover:text-white hover:bg-slate-800/60'
+                    ? 'bg-teal-500/15 text-teal-200 border-l-4 border-teal-300 shadow-sm'
+                    : 'text-slate-300 hover:text-white hover:bg-white/5'
                 }`
               }
               title={collapsed ? item.name : undefined}
@@ -136,7 +138,7 @@ export default function Sidebar({ collapsed, setCollapsed }) {
       </div>
 
       {/* System Status Footer */}
-      <div className="p-3 border-t border-slate-800 bg-slate-950/40">
+      <div className="p-3 border-t border-[#1d3c47] bg-[#0c222b]/70">
         {!collapsed ? (
           <div className="flex items-center justify-between text-xs text-slate-400 px-1">
             <div className="flex items-center gap-2">
@@ -154,4 +156,3 @@ export default function Sidebar({ collapsed, setCollapsed }) {
     </aside>
   );
 }
-

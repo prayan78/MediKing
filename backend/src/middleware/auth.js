@@ -17,6 +17,10 @@ const protect = async (req, res, next) => {
         return res.status(401).json({ success: false, message: 'User belonging to this token no longer exists.' });
       }
 
+      if (user.tokenVersion > 0 && decoded.tokenVersion !== user.tokenVersion) {
+        return res.status(401).json({ success: false, message: 'Your session has expired. Please sign in again.' });
+      }
+
       if (!user.isActive) {
         return res.status(403).json({ success: false, message: 'Account has been deactivated. Please contact administrator.' });
       }
@@ -33,4 +37,3 @@ const protect = async (req, res, next) => {
 };
 
 module.exports = { protect };
-

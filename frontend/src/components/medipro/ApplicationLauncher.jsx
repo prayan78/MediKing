@@ -1,18 +1,40 @@
 import React from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import {
+  ArrowUpRight,
+  BarChart3,
+  Building2,
+  CalendarDays,
+  HeartPulse,
+  LogOut,
+  Pill,
+  Settings,
+  Users,
+} from 'lucide-react';
 
 const applications = [
-  { id: 'account', label: 'Account', available: true },
-  { id: 'hmis', label: 'HMIS System', available: false },
-  { id: 'medipro', label: 'Pharmacy', available: true },
-  { id: 'attendance', label: 'Attendance', available: true },
+  { id: 'account', label: 'Accounts', description: 'Vouchers, ledgers and statements', icon: BarChart3, color: 'bg-violet-50 text-violet-700', roles: ['super_admin', 'hospital_admin', 'accountant'] },
+  { id: 'medipro', label: 'Pharmacy', description: 'Sales, inventory and purchases', icon: Pill, color: 'bg-teal-50 text-teal-700', roles: ['super_admin', 'hospital_admin', 'pharmacist', 'inventory_manager', 'accountant'] },
+  { id: 'attendance', label: 'Attendance', description: 'Staff shifts and weekly roster', icon: CalendarDays, color: 'bg-blue-50 text-blue-700', roles: ['super_admin', 'hospital_admin', 'nurse', 'receptionist'] },
+  { id: 'modern', label: 'Hospital workspace', description: 'Patients, OPD, laboratory and reports', icon: HeartPulse, color: 'bg-rose-50 text-rose-700' },
 ];
 
 export default function ApplicationLauncher({ onSelect }) {
-  const { currentBranch, user, logout } = useAuth();
+  const { currentBranch, user, logout, dateSystem } = useAuth();
   const navigate = useNavigate();
-  const branchTitle = currentBranch?.name?.toUpperCase() || 'NORVIC PHARMACIA P. LTD.';
+  const canAdminister = ['super_admin', 'hospital_admin'].includes(user?.role);
+  const visibleApplications = applications.filter((application) => (
+    !application.roles ||
+    application.roles.includes(user?.role) ||
+    application.roles.some((role) => user?.permissions?.includes(role))
+  ));
+
+  const openRoute = (path) => {
+    localStorage.setItem('mediking_view_mode', 'modern');
+    window.dispatchEvent(new CustomEvent('view-mode-changed', { detail: 'modern' }));
+    navigate(path);
+  };
 
   const handleExit = () => {
     if (window.confirm('Do you want to log out of MediKing?')) {
@@ -22,60 +44,50 @@ export default function ApplicationLauncher({ onSelect }) {
   };
 
   return (
-    <div className="flex h-screen w-full flex-col overflow-hidden bg-[#f0f2f5] font-sans">
-      <header className="shrink-0 border-b border-slate-400 bg-[#ece9d8] text-[11px] text-slate-800">
-        <div className="flex items-center justify-between border-b border-slate-300 px-2 py-1">
-          <span className="font-semibold">{branchTitle}</span>
-          <div className="flex items-center gap-3">
-            <span className="text-slate-500">MediPro</span>
-            <button
-              type="button"
-              onClick={handleExit}
-              className="rounded border border-rose-700 px-2 py-0.5 font-semibold text-rose-700 hover:bg-rose-700 hover:text-white"
-            >
-              Exit
-            </button>
-          </div>
+    <div className="flex min-h-screen flex-col bg-[#f4f7fb] text-slate-900">
+      <header className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 bg-white px-5 py-4 shadow-sm sm:px-8">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-teal-700 text-white"><HeartPulse size={22} /></div>
+          <div><p className="font-bold tracking-tight">MediKing</p><p className="text-[11px] text-slate-500">{currentBranch?.name || 'Hospital operations'}</p></div>
         </div>
-        <div className="px-2 py-1 font-semibold text-slate-700">{user?.name || 'User'}</div>
+        <div className="flex items-center gap-3">
+          <div className="hidden text-right sm:block"><p className="text-sm font-semibold">{user?.name || 'Staff member'}</p><p className="text-xs text-slate-500">{user?.role?.replace(/_/g, ' ')} · {dateSystem}</p></div>
+          {canAdminister && <button onClick={() => openRoute('/admin')} className="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-2 text-sm font-medium hover:bg-slate-50"><Users size={16} /> Staff & roles</button>}
+          {canAdminister && <button onClick={() => openRoute('/settings')} aria-label="System settings" className="rounded-lg border border-slate-200 p-2.5 text-slate-700 hover:bg-slate-50"><Settings size={17} /></button>}
+          <button onClick={handleExit} aria-label="Sign out" className="rounded-lg border border-slate-200 p-2.5 text-slate-600 hover:bg-rose-50 hover:text-rose-700"><LogOut size={17} /></button>
+        </div>
       </header>
 
-      <main className="relative flex flex-1 overflow-hidden bg-white">
-        <div className="relative flex w-full flex-col justify-between overflow-hidden">
-          <div className="relative h-40 shrink-0 overflow-hidden bg-[#2b4c7e] shadow-md">
-            <h1 className="absolute right-6 top-6 z-10 text-right font-serif text-xl font-bold tracking-wide text-white sm:text-2xl">
-              {branchTitle}
-            </h1>
-            <svg className="absolute bottom-0 left-0 h-28 w-full" viewBox="0 0 1440 120" fill="none" preserveAspectRatio="none" aria-hidden="true">
-              <path d="M0,120 L1440,120 L1440,0 C1000,100 400,20 0,120 Z" fill="white" />
-            </svg>
-          </div>
-          <section className="absolute left-8 top-1/3 z-10 flex min-w-48 flex-col items-start gap-4 font-mono text-sm">
-            {applications.map((application) => (
+      <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-5 py-10 sm:px-8 lg:py-14">
+        <div className="mb-9 max-w-2xl">
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-teal-800">Hospital operations</p>
+          <h1 className="mt-2 text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl">Good to see you, {user?.name?.split(' ')[0] || 'team'}.</h1>
+          <p className="mt-3 text-sm leading-6 text-slate-600">Choose a workspace to continue. Your access is tailored to your assigned role.</p>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          {visibleApplications.map((application) => {
+            const Icon = application.icon;
+            return (
               <button
                 key={application.id}
                 type="button"
-                disabled={!application.available}
                 onClick={() => onSelect(application.id)}
-                className={`text-left tracking-wide ${
-                  application.available
-                    ? 'text-slate-700 hover:text-blue-800 hover:underline'
-                    : 'cursor-not-allowed text-slate-400'
-                }`}
-                title={application.available ? `Open ${application.label}` : `${application.label} is not available yet`}
+                className="group flex min-h-48 flex-col rounded-2xl border border-slate-200 bg-white p-5 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-teal-300 hover:shadow-md"
               >
-                {application.label}
+                <span className={`mb-7 inline-flex h-11 w-11 items-center justify-center rounded-xl ${application.color}`}><Icon size={21} /></span>
+                <span className="flex w-full items-center justify-between text-base font-semibold text-slate-900">
+                  {application.label}<ArrowUpRight size={17} className="text-slate-400 transition group-hover:text-teal-700" />
+                </span>
+                <span className="mt-1 text-xs leading-5 text-slate-500">{application.description}</span>
               </button>
-            ))}
-          </section>
-          <div className="absolute bottom-0 left-0 right-0 flex items-center justify-between border-t-2 border-rose-700 bg-[#2b4c7e] px-4 py-2 font-mono text-[11px] text-white">
-            <span>Pharmacy Department</span>
-            <span>{currentBranch?.name || 'MediKing'}</span>
-          </div>
+            );
+          })}
         </div>
-        <div className="pointer-events-none absolute bottom-20 right-12 text-right font-serif text-4xl font-black italic text-[#2b4c7e] sm:text-6xl">
-          <span className="text-emerald-600">m</span> MEDI<br />PRO
-          <div className="mt-1 text-[9px] tracking-widest text-rose-700">PIONEER IN BUSINESS SOFTWARE</div>
+
+        <div className="mt-auto flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 pt-6 text-xs text-slate-500">
+          <span className="inline-flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-emerald-500" /> Secure hospital workspace</span>
+          <span className="inline-flex items-center gap-2"><Building2 size={14} /> {currentBranch?.name || 'MediKing'} <span className="text-slate-300">·</span> {dateSystem} dates</span>
         </div>
       </main>
     </div>

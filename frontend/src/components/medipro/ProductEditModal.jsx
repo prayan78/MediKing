@@ -389,7 +389,7 @@ export default function ProductEditModal({ isOpen, onClose, product, onSaved }) 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-[1px] p-2 overflow-y-auto">
       {/* Classic MediPro Window */}
-      <div className="w-full max-w-4xl bg-[#ece9d8] border-2 border-slate-500 shadow-2xl rounded-xs overflow-hidden text-slate-900 font-sans text-xs my-4">
+      <div className="w-full max-w-4xl bg-[#f1f5f9] border-2 border-slate-500 shadow-2xl rounded-xs overflow-hidden text-slate-900 font-sans text-xs my-4">
         {/* Title Bar */}
         <div className="bg-gradient-to-r from-[#0a246a] to-[#a6caf0] text-white px-2 py-1 flex items-center justify-between font-bold select-none">
           <span className="text-[11px] tracking-wide">
@@ -399,7 +399,7 @@ export default function ProductEditModal({ isOpen, onClose, product, onSaved }) 
             <button
               type="button"
               onClick={onClose}
-              className="w-4 h-4 bg-[#ece9d8] text-slate-900 hover:bg-rose-600 hover:text-white flex items-center justify-center font-bold text-xs rounded-xs border border-slate-600 shadow-xs"
+              className="w-4 h-4 bg-[#f1f5f9] text-slate-900 hover:bg-rose-600 hover:text-white flex items-center justify-center font-bold text-xs rounded-xs border border-slate-600 shadow-xs"
             >
               ×
             </button>
@@ -508,7 +508,7 @@ export default function ProductEditModal({ isOpen, onClose, product, onSaved }) 
                 <div className="border border-slate-400 bg-white overflow-hidden">
                   <table className="w-full text-left text-[11px] border-collapse">
                     <thead>
-                      <tr className="bg-[#ece9d8] border-b border-slate-300 text-slate-700">
+                      <tr className="bg-[#f1f5f9] border-b border-slate-300 text-slate-700">
                         <th className="px-2 py-0.5 w-16 border-r border-slate-300">genid</th>
                         <th className="px-2 py-0.5">genericname</th>
                         <th className="px-1 py-0.5 w-8 text-center">Action</th>
@@ -921,7 +921,7 @@ export default function ProductEditModal({ isOpen, onClose, product, onSaved }) 
             <button
               type="submit"
               disabled={loading}
-              className="px-8 py-1.5 bg-[#ece9d8] hover:bg-[#dfdbcd] border-2 border-slate-600 shadow-md text-xs font-bold text-slate-900 active:translate-y-0.5 transition flex items-center gap-1.5 disabled:opacity-50"
+              className="px-8 py-1.5 bg-[#f1f5f9] hover:bg-[#e2e8f0] border-2 border-slate-600 shadow-md text-xs font-bold text-slate-900 active:translate-y-0.5 transition flex items-center gap-1.5 disabled:opacity-50"
             >
               <Save size={13} />
               <span>{loading ? 'Saving...' : 'Save'}</span>
@@ -929,7 +929,7 @@ export default function ProductEditModal({ isOpen, onClose, product, onSaved }) 
             <button
               type="button"
               onClick={onClose}
-              className="px-8 py-1.5 bg-[#ece9d8] hover:bg-[#dfdbcd] border-2 border-slate-600 shadow-md text-xs font-bold text-slate-900 active:translate-y-0.5 transition"
+              className="px-8 py-1.5 bg-[#f1f5f9] hover:bg-[#e2e8f0] border-2 border-slate-600 shadow-md text-xs font-bold text-slate-900 active:translate-y-0.5 transition"
             >
               Cancel
             </button>

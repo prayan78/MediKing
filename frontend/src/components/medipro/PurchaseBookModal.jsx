@@ -1,19 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
+import { formatSystemDate } from '../../utils/nepaliDate';
+import { useAuth } from '../../context/AuthContext';
 
 export default function PurchaseBookModal({
   isOpen,
   onClose,
   initialDateRange,
 }) {
+  const { dateSystem } = useAuth();
   const [purchases, setPurchases] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [search, setSearch] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
 
-  const [fromDate, setFromDate] = useState(initialDateRange?.fromDate || '2078/05/01');
-  const [toDate, setToDate] = useState(initialDateRange?.toDate || '2078/05/14');
+  const [fromDate, setFromDate] = useState(initialDateRange?.fromDate || formatSystemDate(new Date()));
+  const [toDate, setToDate] = useState(initialDateRange?.toDate || formatSystemDate(new Date()));
   const [currency, setCurrency] = useState('NC');
   const [bulk, setBulk] = useState(false);
 
@@ -22,6 +25,14 @@ export default function PurchaseBookModal({
       fetchPurchases();
     }
   }, [isOpen]);
+
+  useEffect(() => {
+    if (!initialDateRange) {
+      const today = formatSystemDate(new Date());
+      setFromDate(today);
+      setToDate(today);
+    }
+  }, [dateSystem, initialDateRange]);
 
   const closeModal = () => {
     setSearch('');
@@ -62,16 +73,16 @@ export default function PurchaseBookModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 select-none font-sans">
       {/* Exact MediPro Window styling matching Image 5 */}
-      <div className="w-[1100px] max-w-[98vw] max-h-[96vh] bg-[#ece9d8] border-2 border-slate-600 shadow-2xl flex flex-col text-xs text-slate-800 overflow-hidden">
+      <div className="w-[1100px] max-w-[98vw] max-h-[96vh] bg-[#f1f5f9] border-2 border-slate-600 shadow-2xl flex flex-col text-xs text-slate-800 overflow-hidden">
         {/* Title Bar */}
-        <div className="bg-[#2b4c7e] text-white px-2 py-1 flex items-center justify-between font-bold text-xs">
+        <div className="bg-[#0f766e] text-white px-2 py-1 flex items-center justify-between font-bold text-xs">
           <div className="flex items-center gap-1.5">
             <span className="text-yellow-300">📖</span>
             <span>Purchase Book</span>
           </div>
           <button
             onClick={closeModal}
-            className="w-4 h-4 bg-[#ece9d8] text-slate-900 hover:bg-rose-600 hover:text-white flex items-center justify-center font-bold text-xs rounded-xs border border-slate-600 shadow-xs"
+            className="w-4 h-4 bg-[#f1f5f9] text-slate-900 hover:bg-rose-600 hover:text-white flex items-center justify-center font-bold text-xs rounded-xs border border-slate-600 shadow-xs"
           >
             ×
           </button>
@@ -97,7 +108,7 @@ export default function PurchaseBookModal({
         </div>
 
         {/* Date Filter & Search Strip matching Image 5 */}
-        <div className="p-2 bg-[#ece9d8] border-b border-slate-300 space-y-1.5 text-[11px]">
+        <div className="p-2 bg-[#f1f5f9] border-b border-slate-300 space-y-1.5 text-[11px]">
           <div className="flex items-center gap-2 flex-wrap">
             <button
               onClick={fetchPurchases}
@@ -168,7 +179,7 @@ export default function PurchaseBookModal({
             <div className="p-4 text-center text-rose-600 text-xs">{error}</div>
           ) : (
             <table className="w-full text-left border-collapse text-[11px] font-sans">
-              <thead className="bg-[#ece9d8] sticky top-0 border-b border-slate-400 text-slate-800 font-semibold select-none z-10">
+              <thead className="bg-[#f1f5f9] sticky top-0 border-b border-slate-400 text-slate-800 font-semibold select-none z-10">
                 <tr>
                   <th className="w-5 py-1 px-1 border-r border-slate-300"></th>
                   <th className="py-1 px-2 border-r border-slate-300 w-20">Date</th>
@@ -205,7 +216,7 @@ export default function PurchaseBookModal({
                         onClick={() => setSelectedIndex(index)}
                         className={`cursor-pointer transition-colors ${
                           isSelected
-                            ? 'bg-[#316ac5] text-white font-medium'
+                            ? 'bg-[#0f766e] text-white font-medium'
                             : index % 2 === 0
                             ? 'bg-white hover:bg-blue-50 text-slate-900'
                             : 'bg-[#fbfbf9] hover:bg-blue-50 text-slate-900'
@@ -215,7 +226,7 @@ export default function PurchaseBookModal({
                           {isSelected && <span className="text-[9px]">▶</span>}
                         </td>
                         <td className="py-0.5 px-2 border-r border-slate-200 font-mono text-[10px]">
-                          {p.purchDateBs}
+                          {p.purchDateAd ? formatSystemDate(p.purchDateAd) : p.purchDateBs || '-'}
                         </td>
                         <td className="py-0.5 px-2 border-r border-slate-200 font-mono font-bold">
                           {p.mrnNo}
@@ -224,7 +235,7 @@ export default function PurchaseBookModal({
                           {p.billNo || '-'}
                         </td>
                         <td className="py-0.5 px-2 border-r border-slate-200 font-mono text-[10px]">
-                          {p.billDateAd ? new Date(p.billDateAd).toISOString().split('T')[0] : p.billDateBs || '-'}
+                          {p.billDateAd ? formatSystemDate(p.billDateAd) : p.billDateBs || '-'}
                         </td>
                         <td className="py-0.5 px-1 border-r border-slate-200 text-center font-mono font-bold">
                           {p.cashParty || 'N'}
@@ -272,7 +283,7 @@ export default function PurchaseBookModal({
         </div>
 
         {/* Bottom Status & Summary Totals matching Image 5 */}
-        <div className="bg-[#ece9d8] border-t border-slate-300 px-3 py-1.5 flex items-center justify-between text-xs font-sans">
+        <div className="bg-[#f1f5f9] border-t border-slate-300 px-3 py-1.5 flex items-center justify-between text-xs font-sans">
           <div className="flex items-center gap-3">
             <span className="font-semibold text-slate-700">
               Total Invoices: {filteredPurchases.length}

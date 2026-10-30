@@ -28,7 +28,7 @@ import {
 import { useOutletContext } from 'react-router-dom';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
-import { getBikramSambatDate } from '../utils/nepaliDate';
+import { formatSystemDate } from '../utils/nepaliDate';
 
 export default function Dashboard() {
   const { currentBranch, user } = useAuth();
@@ -97,13 +97,7 @@ export default function Dashboard() {
     fetchDashboardData();
   };
 
-  const bsDate = getBikramSambatDate(currentTime);
-  const formattedEnDate = currentTime.toLocaleDateString('en-US', {
-    weekday: 'short',
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  });
+  const formattedDate = formatSystemDate(currentTime, { weekday: 'long' });
   const formattedTime = currentTime.toLocaleTimeString('en-US', {
     hour12: false,
     hour: '2-digit',
@@ -172,9 +166,7 @@ export default function Dashboard() {
                 </span>
               </div>
               <div className="flex items-center gap-2 text-[11px] text-slate-300 justify-end mt-0.5">
-                <span className="text-emerald-300 font-semibold">{bsDate.formatted} (B.S.)</span>
-                <span>•</span>
-                <span>{formattedEnDate}</span>
+                <span>{formattedDate} ({localStorage.getItem('mediking_date_system') || 'AD'})</span>
               </div>
             </div>
 
@@ -636,7 +628,7 @@ export default function Dashboard() {
                     </div>
                     <div className="text-right">
                       <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-orange-200 text-orange-900">
-                        {new Date(b.expiryDate).toLocaleDateString()}
+                        {formatSystemDate(b.expiryDate)}
                       </span>
                     </div>
                   </div>
@@ -702,7 +694,7 @@ export default function Dashboard() {
             <div className="p-6 text-xs space-y-3 font-mono">
               <div className="flex justify-between">
                 <span>Invoice: <strong>{selectedReceipt.invoiceNumber}</strong></span>
-                <span>Date: {new Date(selectedReceipt.saleDate).toLocaleDateString()}</span>
+                <span>Date: {formatSystemDate(selectedReceipt.saleDate)}</span>
               </div>
               <div className="flex justify-between">
                 <span>Customer: {selectedReceipt.customerName}</span>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { getBikramSambatDate } from '../../utils/nepaliDate';
+import { formatSystemDate, getBikramSambatDate } from '../../utils/nepaliDate';
 import DrugSetupModal from './DrugSetupModal';
 import ProductListModal from './ProductListModal';
 import CompanySetupModal from './CompanySetupModal';
@@ -24,7 +24,7 @@ import {
 } from 'lucide-react';
 
 export default function MediProWorkspace({ onSwitchToModern, onSwitchToLauncher }) {
-  const { currentBranch } = useAuth();
+  const { currentBranch, dateSystem } = useAuth();
 
   // Menu dropdown states
   const [activeMenu, setActiveMenu] = useState(null); // 'catalogue', 'purchase', 'sales', 'rep_inv', 'rep_acc', etc.
@@ -114,13 +114,6 @@ export default function MediProWorkspace({ onSwitchToModern, onSwitchToLauncher 
   }, []);
 
   // Format English Date
-  const formattedEnDate = currentTime.toLocaleDateString('en-US', {
-    weekday: 'long',
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric',
-  });
-
   // Format Digital Clock (13:29:17 PM or HH:mm:ss AM/PM)
   const formattedTime = currentTime.toLocaleTimeString('en-US', {
     hour12: false,
@@ -129,7 +122,7 @@ export default function MediProWorkspace({ onSwitchToModern, onSwitchToLauncher 
     second: '2-digit',
   });
 
-  // Format Nepali BS Date
+  const formattedDate = formatSystemDate(currentTime, { weekday: 'long' });
   const bsDate = getBikramSambatDate(currentTime);
 
   const hospitalTitle =
@@ -154,9 +147,9 @@ export default function MediProWorkspace({ onSwitchToModern, onSwitchToLauncher 
   };
 
   return (
-    <div className="flex flex-col h-screen w-full bg-[#f0f2f5] select-none font-sans overflow-hidden">
+    <div className="flex flex-col h-screen w-full bg-[#f8fafc] select-none font-sans overflow-hidden">
       {/* 1. Top MediPro Application Menu Bar (Exact replica of Image 1 & Image 2) */}
-      <div className="bg-[#ece9d8] border-b border-slate-400 text-xs shrink-0 z-30">
+      <div className="bg-[#f1f5f9] border-b border-slate-400 text-xs shrink-0 z-30">
         {/* Upper title strip */}
         <div className="px-2 py-0.5 flex items-center justify-between text-[11px] font-bold text-slate-800 border-b border-slate-300">
           <div className="flex items-center gap-2">
@@ -183,7 +176,7 @@ export default function MediProWorkspace({ onSwitchToModern, onSwitchToLauncher 
               <button
                 onClick={() => setActiveMenu(activeMenu === 'app' ? null : 'app')}
                 className={`px-2 py-0.5 rounded-xs transition font-semibold ${
-                  activeMenu === 'app' ? 'bg-[#316ac5] text-white' : 'hover:bg-[#316ac5] hover:text-white text-slate-900'
+                  activeMenu === 'app' ? 'bg-[#0f766e] text-white' : 'hover:bg-[#0f766e] hover:text-white text-slate-900'
                 }`}
               >
                 Menu
@@ -192,7 +185,7 @@ export default function MediProWorkspace({ onSwitchToModern, onSwitchToLauncher 
                 <div className="absolute left-0 mt-0.5 w-48 bg-white border border-slate-400 shadow-xl py-0.5 z-50 text-slate-900 text-[11px] font-sans">
                   <button
                     onClick={() => { setActiveMenu(null); onSwitchToLauncher?.(); }}
-                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                    className="w-full text-left px-3 py-1 hover:bg-[#0f766e] hover:text-white"
                   >
                     Application Selection
                   </button>
@@ -206,8 +199,8 @@ export default function MediProWorkspace({ onSwitchToModern, onSwitchToLauncher 
                 onClick={() => setActiveMenu(activeMenu === 'sales' ? null : 'sales')}
                 className={`px-2 py-0.5 rounded-xs transition font-semibold ${
                   activeMenu === 'sales'
-                    ? 'bg-[#316ac5] text-white'
-                    : 'hover:bg-[#316ac5] hover:text-white text-slate-900'
+                    ? 'bg-[#0f766e] text-white'
+                    : 'hover:bg-[#0f766e] hover:text-white text-slate-900'
                 }`}
               >
                 Sales-Department
@@ -220,7 +213,7 @@ export default function MediProWorkspace({ onSwitchToModern, onSwitchToLauncher 
                       setActiveMenu(null);
                       setGoodsSalesSectionOpen(true);
                     }}
-                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white font-semibold text-blue-900"
+                    className="w-full text-left px-3 py-1 hover:bg-[#0f766e] hover:text-white font-semibold text-blue-900"
                   >
                     Goods Sales Billing
                   </button>
@@ -252,13 +245,13 @@ export default function MediProWorkspace({ onSwitchToModern, onSwitchToLauncher 
 
                   <button
                     onClick={() => { setActiveMenu(null); setSalesReportOpen(true); }}
-                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                    className="w-full text-left px-3 py-1 hover:bg-[#0f766e] hover:text-white"
                   >
                     Sales / Sales-Return Register
                   </button>
                   <button
                     onClick={() => { setActiveMenu(null); setSalesReportOpen(true); }}
-                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                    className="w-full text-left px-3 py-1 hover:bg-[#0f766e] hover:text-white"
                   >
                     Sales Register
                   </button>
@@ -276,7 +269,7 @@ export default function MediProWorkspace({ onSwitchToModern, onSwitchToLauncher 
                       setActiveMenu(null);
                       setUserwiseCashSummaryOpen(true);
                     }}
-                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white font-semibold text-blue-900"
+                    className="w-full text-left px-3 py-1 hover:bg-[#0f766e] hover:text-white font-semibold text-blue-900"
                   >
                     Userwise Cash Summary
                   </button>
@@ -374,8 +367,8 @@ export default function MediProWorkspace({ onSwitchToModern, onSwitchToLauncher 
                 onClick={() => setActiveMenu(activeMenu === 'purchase' ? null : 'purchase')}
                 className={`px-2 py-0.5 rounded-xs transition font-semibold ${
                   activeMenu === 'purchase'
-                    ? 'bg-[#316ac5] text-white'
-                    : 'hover:bg-[#316ac5] hover:text-white text-slate-900'
+                    ? 'bg-[#0f766e] text-white'
+                    : 'hover:bg-[#0f766e] hover:text-white text-slate-900'
                 }`}
               >
                 Purchase-Department
@@ -410,7 +403,7 @@ export default function MediProWorkspace({ onSwitchToModern, onSwitchToLauncher 
                     onMouseEnter={() => setPurchaseSubmenuOpen(true)}
                     onMouseLeave={() => setPurchaseSubmenuOpen(false)}
                   >
-                    <div className="w-full px-3 py-1 bg-blue-50 text-[#0a246a] hover:bg-[#316ac5] hover:text-white flex items-center justify-between cursor-pointer font-semibold">
+                    <div className="w-full px-3 py-1 bg-blue-50 text-[#0a246a] hover:bg-[#0f766e] hover:text-white flex items-center justify-between cursor-pointer font-semibold">
                       <span>Purchase Section</span>
                       <span className="text-[9px]">▶</span>
                     </div>
@@ -423,7 +416,7 @@ export default function MediProWorkspace({ onSwitchToModern, onSwitchToLauncher 
                             setPurchaseSubmenuOpen(false);
                             setPurchaseEntryOpen(true);
                           }}
-                          className="w-full text-left px-3 py-1.5 hover:bg-[#316ac5] hover:text-white font-bold flex items-center justify-between text-blue-900"
+                          className="w-full text-left px-3 py-1.5 hover:bg-[#0f766e] hover:text-white font-bold flex items-center justify-between text-blue-900"
                         >
                           <span>Purchase Entry</span>
                           <span className="text-[9px] text-slate-400 font-mono">F7</span>
@@ -505,7 +498,7 @@ export default function MediProWorkspace({ onSwitchToModern, onSwitchToLauncher 
                       setActiveMenu(null);
                       setPurchaseRegisterOpen(true);
                     }}
-                    className="w-full text-left px-3 py-1.5 hover:bg-[#316ac5] hover:text-white font-bold text-blue-900 flex items-center justify-between"
+                    className="w-full text-left px-3 py-1.5 hover:bg-[#0f766e] hover:text-white font-bold text-blue-900 flex items-center justify-between"
                   >
                     <span>Purchase / Adjustment Register</span>
                     <span className="text-[9px] text-slate-400 font-mono">F8</span>
@@ -517,7 +510,7 @@ export default function MediProWorkspace({ onSwitchToModern, onSwitchToLauncher 
                       setActiveMenu(null);
                       setPurchaseBookOpen(true);
                     }}
-                    className="w-full text-left px-3 py-1.5 hover:bg-[#316ac5] hover:text-white font-bold text-blue-900 flex items-center justify-between border-t border-slate-200"
+                    className="w-full text-left px-3 py-1.5 hover:bg-[#0f766e] hover:text-white font-bold text-blue-900 flex items-center justify-between border-t border-slate-200"
                   >
                     <span>Purchase Book</span>
                     <span className="text-[9px] text-slate-400 font-mono">Image 5</span>
@@ -536,7 +529,7 @@ export default function MediProWorkspace({ onSwitchToModern, onSwitchToLauncher 
                   setAccountVoucherSubmenuOpen(false);
                 }}
                 className={`px-2 py-0.5 rounded-xs transition font-semibold ${
-                  activeMenu === 'account' ? 'bg-[#316ac5] text-white' : 'hover:bg-[#316ac5] hover:text-white text-slate-900'
+                  activeMenu === 'account' ? 'bg-[#0f766e] text-white' : 'hover:bg-[#0f766e] hover:text-white text-slate-900'
                 }`}
               >
                 Account-Department
@@ -550,7 +543,7 @@ export default function MediProWorkspace({ onSwitchToModern, onSwitchToLauncher 
                   >
                     <button
                       onClick={() => setAccountVoucherSubmenuOpen((open) => !open)}
-                      className="flex w-full items-center justify-between bg-[#316ac5] px-3 py-1 text-left font-semibold text-white"
+                      className="flex w-full items-center justify-between bg-[#0f766e] px-3 py-1 text-left font-semibold text-white"
                     >
                       <span>Voucher Entry Section</span><span>›</span>
                     </button>
@@ -562,7 +555,7 @@ export default function MediProWorkspace({ onSwitchToModern, onSwitchToLauncher 
                             setAccountVoucherSubmenuOpen(false);
                             setJournalVoucherOpen(true);
                           }}
-                          className="w-full px-3 py-1.5 text-left font-semibold text-blue-900 hover:bg-[#316ac5] hover:text-white"
+                          className="w-full px-3 py-1.5 text-left font-semibold text-blue-900 hover:bg-[#0f766e] hover:text-white"
                         >
                           Journal Voucher Entry
                         </button>
@@ -584,8 +577,8 @@ export default function MediProWorkspace({ onSwitchToModern, onSwitchToLauncher 
                 onClick={() => setActiveMenu(activeMenu === 'rep_inv' ? null : 'rep_inv')}
                 className={`px-2 py-0.5 rounded-xs transition font-semibold ${
                   activeMenu === 'rep_inv'
-                    ? 'bg-[#316ac5] text-white'
-                    : 'hover:bg-[#316ac5] hover:text-white text-slate-900'
+                    ? 'bg-[#0f766e] text-white'
+                    : 'hover:bg-[#0f766e] hover:text-white text-slate-900'
                 }`}
               >
                 Reports-Inventory
@@ -616,7 +609,7 @@ export default function MediProWorkspace({ onSwitchToModern, onSwitchToLauncher 
                       setActiveMenu(null);
                       setStockBalanceOpen(true);
                     }}
-                    className="w-full text-left px-3 py-1.5 hover:bg-[#316ac5] hover:text-white font-bold text-blue-900 flex items-center justify-between"
+                    className="w-full text-left px-3 py-1.5 hover:bg-[#0f766e] hover:text-white font-bold text-blue-900 flex items-center justify-between"
                   >
                     <span>Stock Balance</span>
                   </button>
@@ -658,7 +651,7 @@ export default function MediProWorkspace({ onSwitchToModern, onSwitchToLauncher 
               <button
                 onClick={() => setActiveMenu(activeMenu === 'rep_acc' ? null : 'rep_acc')}
                 className={`px-2 py-0.5 rounded-xs transition font-semibold ${
-                  activeMenu === 'rep_acc' ? 'bg-[#316ac5] text-white' : 'hover:bg-[#316ac5] hover:text-white text-slate-900'
+                  activeMenu === 'rep_acc' ? 'bg-[#0f766e] text-white' : 'hover:bg-[#0f766e] hover:text-white text-slate-900'
                 }`}
               >
                 Reports-Account
@@ -673,7 +666,7 @@ export default function MediProWorkspace({ onSwitchToModern, onSwitchToLauncher 
                           setActiveMenu(null);
                           setStatementOpen(true);
                         }}
-                        className="w-full px-3 py-1.5 text-left font-semibold text-blue-900 hover:bg-[#316ac5] hover:text-white"
+                        className="w-full px-3 py-1.5 text-left font-semibold text-blue-900 hover:bg-[#0f766e] hover:text-white"
                       >
                         {label}
                       </button>
@@ -691,8 +684,8 @@ export default function MediProWorkspace({ onSwitchToModern, onSwitchToLauncher 
                 onClick={() => setActiveMenu(activeMenu === 'catalogue' ? null : 'catalogue')}
                 className={`px-2 py-0.5 rounded-xs transition font-semibold ${
                   activeMenu === 'catalogue'
-                    ? 'bg-[#316ac5] text-white'
-                    : 'hover:bg-[#316ac5] hover:text-white text-slate-900'
+                    ? 'bg-[#0f766e] text-white'
+                    : 'hover:bg-[#0f766e] hover:text-white text-slate-900'
                 }`}
               >
                 Catalogue
@@ -702,7 +695,7 @@ export default function MediProWorkspace({ onSwitchToModern, onSwitchToLauncher 
                 <div className="absolute left-0 mt-0.5 w-56 bg-white border border-slate-400 shadow-xl py-0.5 z-50 text-slate-900 text-[11px] font-sans">
                   <button
                     onClick={() => handleCatalogueSelect('drug_setup')}
-                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white flex items-center justify-between"
+                    className="w-full text-left px-3 py-1 hover:bg-[#0f766e] hover:text-white flex items-center justify-between"
                   >
                     <span>Drug Setup</span>
                     <span className="text-[9px] text-slate-400 group-hover:text-white font-mono">F3</span>
@@ -753,8 +746,8 @@ export default function MediProWorkspace({ onSwitchToModern, onSwitchToLauncher 
                 onClick={() => setActiveMenu(activeMenu === 'medicine' ? null : 'medicine')}
                 className={`px-2 py-0.5 rounded-xs transition font-semibold ${
                   activeMenu === 'medicine'
-                    ? 'bg-[#316ac5] text-white'
-                    : 'hover:bg-[#316ac5] hover:text-white text-slate-900'
+                    ? 'bg-[#0f766e] text-white'
+                    : 'hover:bg-[#0f766e] hover:text-white text-slate-900'
                 }`}
               >
                 Medicine
@@ -766,7 +759,7 @@ export default function MediProWorkspace({ onSwitchToModern, onSwitchToLauncher 
                       setActiveMenu(null);
                       setGenericMedicineOpen(true);
                     }}
-                    className="w-full text-left px-3 py-1 hover:bg-[#316ac5] hover:text-white"
+                    className="w-full text-left px-3 py-1 hover:bg-[#0f766e] hover:text-white"
                   >
                     Generic Medicine
                   </button>
@@ -797,7 +790,7 @@ export default function MediProWorkspace({ onSwitchToModern, onSwitchToLauncher 
       {/* 2. Central Stage (Exact representation of Image 1) */}
       <div className="flex-1 relative bg-white flex flex-col justify-between overflow-hidden">
         {/* Curved Deep Navy Blue Header Banner */}
-        <div className="relative w-full h-32 sm:h-40 bg-[#2b4c7e] overflow-hidden shadow-md">
+        <div className="relative w-full h-32 sm:h-40 bg-[#0f766e] overflow-hidden shadow-md">
           {/* Header Title Text */}
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
             <h1 className="text-xl sm:text-2xl md:text-3xl font-serif tracking-widest text-white font-extrabold text-center drop-shadow-md px-4">
@@ -902,7 +895,7 @@ export default function MediProWorkspace({ onSwitchToModern, onSwitchToLauncher 
               </div>
             ) : (
               <div>
-                <div className="font-mono text-lg sm:text-xl text-[#2b4c7e] font-semibold tracking-wider select-none">
+                <div className="font-mono text-lg sm:text-xl text-[#0f766e] font-semibold tracking-wider select-none">
                   Pharmacy Department
                 </div>
                 <div className="text-xs text-slate-400 mt-2 font-mono">
@@ -1001,18 +994,18 @@ export default function MediProWorkspace({ onSwitchToModern, onSwitchToLauncher 
         </div>
 
         {/* 3. Bottom Status Bar (Exact replica of Image 1) */}
-        <div className="h-8 bg-[#2b4c7e] text-white px-4 flex items-center justify-between text-xs font-sans font-semibold tracking-wide shrink-0 border-t border-slate-400">
-          {/* Left: English Date */}
-          <div className="w-1/3 truncate text-left">{formattedEnDate}</div>
+        <div className="h-8 bg-[#0f766e] text-white px-4 flex items-center justify-between text-xs font-sans font-semibold tracking-wide shrink-0 border-t border-slate-400">
+          {/* Left: Selected system date */}
+          <div className="w-1/3 truncate text-left">{formattedDate}</div>
 
           {/* Center: Live Digital Clock */}
           <div className="w-1/3 text-center font-mono font-bold text-sm tracking-wider text-yellow-300">
             {formattedTime}
           </div>
 
-          {/* Right: Nepali Bikram Sambat Date */}
+          {/* Right: Active date system */}
           <div className="w-1/3 text-right uppercase tracking-wider font-medium text-emerald-200">
-            {bsDate.formatted}
+            {dateSystem}
           </div>
         </div>
       </div>
@@ -1079,7 +1072,7 @@ export default function MediProWorkspace({ onSwitchToModern, onSwitchToLauncher 
       <StockBalanceValuationModal
         isOpen={stockValuationOpen}
         onClose={() => setStockValuationOpen(false)}
-        initialDate={bsDate.formatted || '2078/05/14'}
+        initialDate={bsDate.numeric || '2078/05/14'}
       />
 
       {/* Cash Sales & Sales Return Modal (Image 2 & 3) */}
@@ -1087,7 +1080,7 @@ export default function MediProWorkspace({ onSwitchToModern, onSwitchToLauncher 
         isOpen={cashSalesOpen}
         onClose={() => setCashSalesOpen(false)}
         isReturn={cashSalesReturn}
-        initialDateBs={bsDate.formatted || '2078/05/14'}
+        initialDateBs={bsDate.numeric || '2078/05/14'}
       />
 
       {/* Userwise Cash Summary Modal (Image 4) */}
@@ -1095,7 +1088,7 @@ export default function MediProWorkspace({ onSwitchToModern, onSwitchToLauncher 
         isOpen={userwiseCashSummaryOpen}
         onClose={() => setUserwiseCashSummaryOpen(false)}
         initialFromDate="2078/05/01"
-        initialToDate={bsDate.formatted || '2078/05/14'}
+        initialToDate={bsDate.numeric || '2078/05/14'}
       />
 
       <SalesReportModal

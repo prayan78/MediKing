@@ -1,8 +1,12 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import api from '../../services/api';
 import { getBikramSambatDate } from '../../utils/nepaliDate';
+import SystemDateInput from '../SystemDateInput';
 
-const today = () => new Date().toISOString().slice(0, 10);
+const today = () => {
+  const date = new Date();
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+};
 const emptyLine = () => ({
   accountCode: '',
   accountName: '',
@@ -100,7 +104,7 @@ export default function JournalVoucherModal({ isOpen, onClose }) {
       const response = await api.post('/journal-vouchers', {
         fiscalYear,
         voucherDate,
-        voucherDateBs: getBikramSambatDate(new Date(`${voucherDate}T12:00:00`)).formatted,
+        voucherDateBs: getBikramSambatDate(new Date(`${voucherDate}T12:00:00`)).numeric,
         lines: validLines,
       });
       setNotice(`Journal voucher ${response.data.data.voucherNo} posted successfully.`);
@@ -125,13 +129,12 @@ export default function JournalVoucherModal({ isOpen, onClose }) {
     }
   };
 
-  const currentBsDate = getBikramSambatDate(new Date(`${voucherDate}T12:00:00`)).formatted;
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/45 p-2 font-sans text-xs text-slate-800">
-      <form onSubmit={postVoucher} className="flex max-h-[96vh] w-[1050px] max-w-[98vw] flex-col overflow-hidden border-2 border-slate-600 bg-[#ece9d8] shadow-2xl">
-        <div className="flex items-center justify-between bg-[#2b4c7e] px-2 py-1 font-bold text-white">
+      <form onSubmit={postVoucher} className="flex max-h-[96vh] w-[1050px] max-w-[98vw] flex-col overflow-hidden border-2 border-slate-600 bg-[#f1f5f9] shadow-2xl">
+        <div className="flex items-center justify-between bg-[#0f766e] px-2 py-1 font-bold text-white">
           <span>Journal Voucher Entry</span>
-          <button type="button" onClick={onClose} aria-label="Close" className="border border-slate-600 bg-[#ece9d8] px-1 font-bold text-slate-900 hover:bg-rose-600 hover:text-white">×</button>
+          <button type="button" onClick={onClose} aria-label="Close" className="border border-slate-600 bg-[#f1f5f9] px-1 font-bold text-slate-900 hover:bg-rose-600 hover:text-white">×</button>
         </div>
         <div className="flex items-center gap-4 border-b border-slate-300 bg-[#f0f0f0] px-3 py-1 text-[11px]">
           <span className="font-semibold underline">Function</span>
@@ -160,8 +163,7 @@ export default function JournalVoucherModal({ isOpen, onClose }) {
           </label>
           <label className="flex items-center gap-2 font-bold sm:col-span-2">
             Voucher Date
-            <input type="date" required value={voucherDate} onChange={(event) => setVoucherDate(event.target.value)} className="border border-slate-400 bg-white px-2 py-1 font-normal" />
-            <span className="font-normal text-slate-600">{currentBsDate}</span>
+            <SystemDateInput required value={voucherDate} onChange={(event) => setVoucherDate(event.target.value)} className="border border-slate-400 bg-white px-2 py-1 font-normal" />
           </label>
           {loading && <span className="self-center text-slate-500">Loading account heads…</span>}
         </div>
@@ -192,7 +194,7 @@ export default function JournalVoucherModal({ isOpen, onClose }) {
                     <input aria-label={`Narration ${index + 1}`} value={line.narration} onChange={(event) => changeLine(index, 'narration', event.target.value)} className="w-full border border-slate-300 px-1.5 py-1" />
                   </td>
                   <td className="border border-slate-300 p-1">
-                    <input type="date" aria-label={`Bill date ${index + 1}`} value={line.billDate} onChange={(event) => changeLine(index, 'billDate', event.target.value)} className="w-full border border-slate-300 px-1 py-1" />
+                    <SystemDateInput aria-label={`Bill date ${index + 1}`} value={line.billDate} onChange={(event) => changeLine(index, 'billDate', event.target.value)} className="w-full border border-slate-300 px-1 py-1" />
                   </td>
                   <td className="border border-slate-300 p-1">
                     <input type="number" min="0" step="0.01" aria-label={`Debit ${index + 1}`} value={line.debit} onChange={(event) => changeLine(index, 'debit', event.target.value)} className="w-full border border-slate-300 px-1.5 py-1 text-right" />
@@ -222,14 +224,14 @@ export default function JournalVoucherModal({ isOpen, onClose }) {
             {accounts.map((account) => <option key={account.accountCode} value={account.accountName}>{account.accountCode}</option>)}
           </datalist>
         </div>
-        <div className="flex flex-wrap items-center justify-between gap-2 border-t border-slate-300 bg-[#ece9d8] px-3 py-2">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-t border-slate-300 bg-[#f1f5f9] px-3 py-2">
           <button type="button" onClick={() => setLines((current) => [...current, emptyLine()])} className="border border-slate-400 bg-white px-3 py-1.5 font-semibold hover:bg-blue-50">Add Line</button>
           <span className={Math.round(totals.debit * 100) === Math.round(totals.credit * 100) ? 'font-semibold text-emerald-700' : 'font-semibold text-rose-700'}>
             {Math.round(totals.debit * 100) === Math.round(totals.credit * 100) ? 'Balanced' : 'Difference'}: {amount(Math.abs(totals.debit - totals.credit))}
           </span>
           <div className="flex gap-2">
             <button type="button" onClick={onClose} className="min-w-24 border border-slate-400 bg-white px-4 py-1.5 hover:bg-slate-100">Close</button>
-            <button type="submit" disabled={saving || loading} className="min-w-28 border border-blue-800 bg-[#316ac5] px-4 py-1.5 font-bold text-white hover:bg-blue-700 disabled:cursor-wait disabled:opacity-60">{saving ? 'Posting…' : 'Post Voucher'}</button>
+            <button type="submit" disabled={saving || loading} className="min-w-28 border border-blue-800 bg-[#0f766e] px-4 py-1.5 font-bold text-white hover:bg-blue-700 disabled:cursor-wait disabled:opacity-60">{saving ? 'Posting…' : 'Post Voucher'}</button>
           </div>
         </div>
       </form>

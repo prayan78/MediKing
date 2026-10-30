@@ -33,13 +33,13 @@ export default function DrugSetupModal({ isOpen, onClose, onSelectCategory }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-[1px] p-4">
       {/* MediPro classic Windows form styling */}
-      <div className="w-full max-w-sm bg-[#ece9d8] border-2 border-slate-400 shadow-2xl rounded-xs overflow-hidden text-slate-900 font-sans text-xs">
+      <div className="w-full max-w-sm bg-[#f1f5f9] border-2 border-slate-400 shadow-2xl rounded-xs overflow-hidden text-slate-900 font-sans text-xs">
         {/* Title Bar */}
         <div className="bg-gradient-to-r from-[#0a246a] to-[#a6caf0] text-white px-2 py-1 flex items-center justify-between font-bold select-none">
           <span className="text-[11px] tracking-wide">Product Setup Category</span>
           <button
             onClick={onClose}
-            className="w-4 h-4 bg-[#ece9d8] text-slate-800 hover:bg-rose-500 hover:text-white flex items-center justify-center font-bold text-xs rounded-xs border border-slate-600 shadow-xs"
+            className="w-4 h-4 bg-[#f1f5f9] text-slate-800 hover:bg-rose-500 hover:text-white flex items-center justify-center font-bold text-xs rounded-xs border border-slate-600 shadow-xs"
           >
             ×
           </button>
@@ -57,8 +57,8 @@ export default function DrugSetupModal({ isOpen, onClose, onSelectCategory }) {
               key={cat.id}
               className={`flex items-center gap-2 px-1.5 py-0.5 rounded select-none text-xs ${
                 cat.enabled
-                  ? `cursor-pointer hover:bg-[#316ac5] hover:text-white ${
-                    selected === cat.id ? 'bg-[#316ac5] text-white font-semibold' : 'text-slate-800'
+                  ? `cursor-pointer hover:bg-[#0f766e] hover:text-white ${
+                    selected === cat.id ? 'bg-[#0f766e] text-white font-semibold' : 'text-slate-800'
                   }`
                   : 'cursor-not-allowed text-slate-400'
               }`}
@@ -85,16 +85,16 @@ export default function DrugSetupModal({ isOpen, onClose, onSelectCategory }) {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex items-center justify-center gap-3 py-2 bg-[#ece9d8] border-t border-slate-300">
+        <div className="flex items-center justify-center gap-3 py-2 bg-[#f1f5f9] border-t border-slate-300">
           <button
             onClick={handleSelect}
-            className="px-6 py-1 bg-[#ece9d8] hover:bg-[#dfdbcd] border border-slate-600 shadow-xs text-xs font-medium text-slate-900 active:translate-y-0.5 transition"
+            className="px-6 py-1 bg-[#f1f5f9] hover:bg-[#e2e8f0] border border-slate-600 shadow-xs text-xs font-medium text-slate-900 active:translate-y-0.5 transition"
           >
             Select
           </button>
           <button
             onClick={onClose}
-            className="px-6 py-1 bg-[#ece9d8] hover:bg-[#dfdbcd] border border-slate-600 shadow-xs text-xs font-medium text-slate-900 active:translate-y-0.5 transition"
+            className="px-6 py-1 bg-[#f1f5f9] hover:bg-[#e2e8f0] border border-slate-600 shadow-xs text-xs font-medium text-slate-900 active:translate-y-0.5 transition"
           >
             Close
           </button>

@@ -41,11 +41,26 @@ const userSchema = new mongoose.Schema(
       minlength: 6,
       select: false,
     },
+    passwordResetTokenHash: {
+      type: String,
+      select: false,
+    },
+    passwordResetExpiresAt: {
+      type: Date,
+      select: false,
+    },
+    tokenVersion: {
+      type: Number,
+      default: 0,
+    },
     role: {
       type: String,
-      enum: USER_ROLES,
       default: 'receptionist',
       required: true,
+    },
+    isApproved: {
+      type: Boolean,
+      default: true,
     },
     branch: {
       type: mongoose.Schema.Types.ObjectId,
@@ -91,4 +106,3 @@ userSchema.methods.matchPassword = async function (enteredPassword) {
 
 module.exports = mongoose.model('User', userSchema);
 module.exports.USER_ROLES = USER_ROLES;
-

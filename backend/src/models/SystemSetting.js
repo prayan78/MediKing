@@ -38,6 +38,11 @@ const systemSettingSchema = new mongoose.Schema(
       type: String,
       default: 'NPR',
     },
+    dateSystem: {
+      type: String,
+      enum: ['AD', 'BS'],
+      default: 'AD',
+    },
     vatPercentage: {
       type: Number,
       default: 13,
@@ -65,4 +70,3 @@ const systemSettingSchema = new mongoose.Schema(
 );
 
 module.exports = mongoose.model('SystemSetting', systemSettingSchema);
-

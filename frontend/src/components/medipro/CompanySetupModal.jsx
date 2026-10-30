@@ -124,16 +124,16 @@ export default function CompanySetupModal({ isOpen, onClose, onSelectCompany }) 
       onKeyDown={handleKeyDown}
     >
       {/* Exact MediPro Window styling matching Image 1 */}
-      <div className="w-[680px] max-w-[95vw] bg-[#ece9d8] border-2 border-slate-600 shadow-2xl flex flex-col text-xs text-slate-800">
+      <div className="w-[680px] max-w-[95vw] bg-[#f1f5f9] border-2 border-slate-600 shadow-2xl flex flex-col text-xs text-slate-800">
         {/* Title Bar */}
-        <div className="bg-[#2b4c7e] text-white px-2 py-1 flex items-center justify-between font-bold text-xs">
+        <div className="bg-[#0f766e] text-white px-2 py-1 flex items-center justify-between font-bold text-xs">
           <div className="flex items-center gap-1.5">
             <span className="text-yellow-300">🏢</span>
             <span>Select Company</span>
           </div>
           <button
             onClick={closeModal}
-            className="w-4 h-4 bg-[#ece9d8] text-slate-900 hover:bg-rose-600 hover:text-white flex items-center justify-center font-bold text-xs rounded-xs border border-slate-600 shadow-xs"
+            className="w-4 h-4 bg-[#f1f5f9] text-slate-900 hover:bg-rose-600 hover:text-white flex items-center justify-center font-bold text-xs rounded-xs border border-slate-600 shadow-xs"
           >
             ×
           </button>
@@ -156,7 +156,7 @@ export default function CompanySetupModal({ isOpen, onClose, onSelectCompany }) 
         </div>
 
         {/* Search input field (exact replica of Image 1) */}
-        <div className="p-1.5 bg-[#ece9d8] border-b border-slate-300">
+        <div className="p-1.5 bg-[#f1f5f9] border-b border-slate-300">
           <input
             ref={searchInputRef}
             type="text"
@@ -175,7 +175,7 @@ export default function CompanySetupModal({ isOpen, onClose, onSelectCompany }) 
             <div className="p-4 text-center text-rose-600 text-xs">{error}</div>
           ) : (
             <table className="w-full text-left border-collapse text-[11px] font-sans">
-              <thead className="bg-[#ece9d8] sticky top-0 border-b border-slate-400 text-slate-800 font-semibold select-none z-10">
+              <thead className="bg-[#f1f5f9] sticky top-0 border-b border-slate-400 text-slate-800 font-semibold select-none z-10">
                 <tr>
                   <th className="w-5 py-1 px-1 border-r border-slate-300"></th>
                   <th className="py-1 px-2 border-r border-slate-300 w-16 text-right">CompCode</th>
@@ -204,7 +204,7 @@ export default function CompanySetupModal({ isOpen, onClose, onSelectCompany }) 
                         onDoubleClick={() => handleSelect(c)}
                         className={`cursor-pointer transition-colors ${
                           isSelected
-                            ? 'bg-[#316ac5] text-white font-medium'
+                            ? 'bg-[#0f766e] text-white font-medium'
                             : index % 2 === 0
                             ? 'bg-white hover:bg-blue-50 text-slate-900'
                             : 'bg-[#fbfbf9] hover:bg-blue-50 text-slate-900'
@@ -244,7 +244,7 @@ export default function CompanySetupModal({ isOpen, onClose, onSelectCompany }) 
         </div>
 
         {/* Bottom Status / Hotkey bar matching Image 1 */}
-        <div className="bg-[#ece9d8] border-t border-slate-300 px-3 py-1 flex items-center justify-between text-[11px] font-sans">
+        <div className="bg-[#f1f5f9] border-t border-slate-300 px-3 py-1 flex items-center justify-between text-[11px] font-sans">
           <span className="font-semibold text-slate-700">
             Press F6 - For New Company Coding
           </span>
@@ -272,12 +272,12 @@ export default function CompanySetupModal({ isOpen, onClose, onSelectCompany }) 
       {/* New Company Coding Modal (F6) */}
       {showNewCompany && (
         <div className="fixed inset-0 z-60 flex items-center justify-center bg-black/50 select-none">
-          <div className="w-96 bg-[#ece9d8] border-2 border-slate-700 shadow-2xl p-4 text-xs">
-            <div className="bg-[#2b4c7e] text-white px-2 py-1 -m-4 mb-3 font-bold flex items-center justify-between">
+          <div className="w-96 bg-[#f1f5f9] border-2 border-slate-700 shadow-2xl p-4 text-xs">
+            <div className="bg-[#0f766e] text-white px-2 py-1 -m-4 mb-3 font-bold flex items-center justify-between">
               <span>New Company Coding (F6)</span>
               <button
                 onClick={() => setShowNewCompany(false)}
-                className="w-4 h-4 bg-[#ece9d8] text-slate-900 flex items-center justify-center text-xs font-bold"
+                className="w-4 h-4 bg-[#f1f5f9] text-slate-900 flex items-center justify-center text-xs font-bold"
               >
                 ×
               </button>
@@ -346,7 +346,7 @@ export default function CompanySetupModal({ isOpen, onClose, onSelectCompany }) 
                 </button>
                 <button
                   type="submit"
-                  className="px-3 py-1 bg-[#316ac5] text-white border border-blue-900 text-xs font-bold"
+                  className="px-3 py-1 bg-[#0f766e] text-white border border-blue-900 text-xs font-bold"
                 >
                   Save Company
                 </button>
