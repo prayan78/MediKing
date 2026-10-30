@@ -74,8 +74,6 @@ export default function JournalVoucherModal({ isOpen, onClose }) {
         const account = accounts.find((item) => item.accountCode.toLowerCase() === value.trim().toLowerCase());
         if (account) updated.accountName = account.accountName;
       }
-      if (field === 'debit' && Number(value) > 0) updated.credit = '';
-      if (field === 'credit' && Number(value) > 0) updated.debit = '';
       return updated;
     }));
   };
@@ -123,7 +121,16 @@ export default function JournalVoucherModal({ isOpen, onClose }) {
       }
     } catch (postError) {
       console.error('Failed to post journal voucher:', postError);
-      setError(postError.response?.data?.message || 'Failed to post journal voucher.');
+      const responseMessage = postError.response?.data?.message;
+      if (responseMessage) {
+        setError(responseMessage);
+      } else if (postError.response?.status === 404) {
+        setError('The journal voucher API route was not found. Restart the backend and try again.');
+      } else if (postError.request) {
+        setError('Could not reach the backend. Check that the backend is running, then try again.');
+      } else {
+        setError(postError.message || 'Failed to post journal voucher.');
+      }
     } finally {
       setSaving(false);
     }
